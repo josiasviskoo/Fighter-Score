@@ -191,16 +191,42 @@
   .seg button.active { background: var(--card-2); color: var(--text); }
 
   /* Cards de atleta */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
   .athlete {
     position: relative; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
     overflow: hidden; cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s;
     display: flex; flex-direction: column;
   }
   .athlete:hover { transform: translateY(-3px); border-color: #3a3a46; box-shadow: var(--shadow); }
-  .athlete-top { position: relative; height: 150px; display: grid; place-items: center; overflow: hidden; }
-  .athlete-top .avatar { width: 92px; height: 92px; font-size: 38px; }
-  .athlete-top::after { content: ""; position: absolute; inset: auto 0 0 0; height: 50%; background: linear-gradient(transparent, var(--card)); }
+  /* Foto do atleta: vertical 1080 × 1920 (9:16) */
+  .athlete-top { position: relative; aspect-ratio: 9 / 16; overflow: hidden; display: flex; align-items: flex-end; }
+  .athlete-top::after { content: ""; position: absolute; inset: auto 0 0 0; height: 45%; background: linear-gradient(transparent, var(--card)); }
+  .athlete-top .portrait { position: absolute; inset: 0; border-radius: 0; transition: transform .4s; }
+  .athlete:hover .portrait { transform: scale(1.04); }
+  .athlete-top .athlete-title { position: relative; z-index: 2; padding: 0 14px 10px; }
+  .portrait {
+    display: grid; place-items: center; overflow: hidden; flex-shrink: 0;
+    aspect-ratio: 9 / 16; border-radius: 12px;
+    background-size: cover; background-position: center top;
+    font-family: var(--font-display); color: rgba(255,255,255,.22); font-size: 96px; line-height: 1;
+  }
+  .music-btn {
+    position: absolute; z-index: 3; right: 10px; bottom: 12px;
+    width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.2); color: #fff; backdrop-filter: blur(4px);
+    transition: background .2s, color .2s, transform .2s;
+  }
+  .music-btn:hover { background: var(--gold); color: #111; transform: scale(1.08); }
+  .music-btn svg { width: 18px; height: 18px; }
+  .song {
+    display: inline-flex; align-items: center; gap: 10px; margin-top: 12px; max-width: 100%;
+    background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.15); border-radius: 999px;
+    padding: 5px 14px 5px 5px; font-size: 13px;
+  }
+  .song .music-btn { position: static; width: 30px; height: 30px; flex-shrink: 0; }
+  .song .music-btn svg { width: 14px; height: 14px; }
+  .song small { display: block; font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+  .song span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .badge-mod {
     position: absolute; top: 10px; left: 10px; z-index: 2;
     font-size: 11px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase;
@@ -226,6 +252,7 @@
   .record .l b { color: var(--red-2); }
 
   .avatar {
+    background-position: center 15% !important;
     border-radius: 50%; display: grid; place-items: center; flex-shrink: 0;
     font-family: var(--font-display); color: #fff; position: relative; z-index: 1;
     border: 3px solid rgba(255,255,255,.12);
@@ -337,7 +364,8 @@
   .profile-hero { position: relative; padding: 28px 26px 22px; border-radius: 20px 20px 0 0; display: flex; gap: 22px; align-items: center; overflow: hidden; }
   .profile-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.25), rgba(0,0,0,.65)); }
   .profile-hero > * { position: relative; z-index: 1; }
-  .profile-hero .avatar { width: 120px; height: 120px; font-size: 50px; }
+  .profile-hero .portrait { width: 135px; font-size: 64px; border: 2px solid rgba(255,255,255,.15); box-shadow: var(--shadow); }
+  .profile-hero .hero-info { min-width: 0; }
   .profile-hero h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 46px; line-height: .95; }
   .profile-hero .nick { color: #ffd9d6; font-weight: 600; }
   .profile-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
@@ -389,7 +417,7 @@
   .form-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
   .terms { font-size: 12px; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; max-width: 440px; }
   .photo-drop { display: flex; align-items: center; gap: 14px; }
-  .photo-drop .avatar { width: 64px; height: 64px; font-size: 26px; background: var(--card-2); }
+  .photo-drop .portrait { width: 72px; font-size: 28px; background-color: var(--card-2); border: 1px dashed #3a3a46; color: var(--muted); }
 
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 30px); opacity: 0; z-index: 200;
@@ -429,15 +457,16 @@
     .fight-row .icon-btn { width: 100%; }
     .kpis { grid-template-columns: repeat(2, 1fr); }
     .profile-hero { flex-wrap: wrap; padding: 26px 18px 18px; }
-    .profile-hero .avatar { width: 88px; height: 88px; font-size: 36px; }
+    .profile-hero .portrait { width: 100px; font-size: 48px; }
     .profile-hero h3 { font-size: 36px; }
     .profile-score { margin-left: 0; }
     .profile-body, .dlg-pad { padding: 18px; }
       .sec-head h2 { font-size: 36px; }
     .slot-row { grid-template-columns: 1fr 1fr; }
     .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
-    .athlete-top { height: 120px; }
-    .athlete-top .avatar { width: 72px; height: 72px; font-size: 30px; }
+    .athlete-top .portrait { font-size: 64px; }
+    .athlete-top .athlete-title { padding: 0 10px 8px; }
+    .athlete-top .music-btn { width: 32px; height: 32px; right: 8px; bottom: 8px; }
   }
 </style>
 </head>
@@ -726,9 +755,9 @@
       <div class="form-sec">Dados pessoais</div>
       <div class="form-grid">
         <div class="field full photo-drop">
-          <div class="avatar" id="photoPreview">?</div>
+          <div class="portrait" id="photoPreview">?</div>
           <div class="field" style="flex:1">
-            <label for="rPhoto">Foto de perfil (opcional)</label>
+            <label for="rPhoto">Foto do atleta — vertical 1080 × 1920 px (opcional)</label>
             <input class="input" id="rPhoto" type="file" accept="image/*">
           </div>
         </div>
@@ -753,6 +782,8 @@
         <div class="field"><label for="rTeam">Equipe / Academia</label><input class="input" id="rTeam" name="team" placeholder="Ex.: Chute Boxe"></div>
         <div class="field"><label for="rStatus">Status</label><select class="input" id="rStatus" name="status"><option>Profissional</option><option>Amador</option></select></div>
         <div class="field full"><label for="rBio">Bio curta</label><textarea class="input" id="rBio" name="bio" rows="2" placeholder="Conte sua trajetória em poucas linhas"></textarea></div>
+        <div class="field"><label for="rSong">Música do atleta</label><input class="input" id="rSong" name="song" placeholder="Ex.: Eye of the Tiger — Survivor"></div>
+        <div class="field"><label for="rSongUrl">Link da música (Spotify, YouTube…)</label><input class="input" id="rSongUrl" name="songUrl" type="url" placeholder="https://"></div>
         <div class="field"><label for="rInsta">Instagram</label><input class="input" id="rInsta" name="insta" placeholder="@seuperfil"></div>
         <div class="field"><label for="rPhone">WhatsApp (privado)</label><input class="input" id="rPhone" name="phone" placeholder="(00) 00000-0000"></div>
       </div>
@@ -890,29 +921,29 @@ const WEIGHTS = [
 ];
 
 const SEED = [
-  { id: "a1", name: "Rafael Monteiro", nick: "Trovão", sex: "Masculino", mods: ["MMA", "Submission"], weight: "Leve (até 70kg)", arena: "Octógono", city: "Curitiba / PR", country: "Brasil", team: "Chute Boxe Diego Lima", status: "Profissional", height: 175, reach: 180, age: 28, insta: "@rafa.trovao", bio: "9 anos de MMA profissional. Especialista em finalizações no chão.", created: 20, sponsored: true,
+  { id: "a1", song: "Eye of the Tiger — Survivor", name: "Rafael Monteiro", nick: "Trovão", sex: "Masculino", mods: ["MMA", "Submission"], weight: "Leve (até 70kg)", arena: "Octógono", city: "Curitiba / PR", country: "Brasil", team: "Chute Boxe Diego Lima", status: "Profissional", height: 175, reach: 180, age: 28, insta: "@rafa.trovao", bio: "9 anos de MMA profissional. Especialista em finalizações no chão.", created: 20, sponsored: true,
     rec: [14, 3, 0], ko: 5, sub: 7, dec: 2 },
-  { id: "a2", name: "Camila Duarte", nick: "Furacão", sex: "Feminino", mods: ["Muay Thai", "K-1"], weight: "Palha (até 52kg)", arena: "Ring", city: "Rio de Janeiro / RJ", country: "Brasil", team: "Nova União", status: "Profissional", height: 162, reach: 164, age: 25, insta: "@camila.furacao", bio: "Campeã brasileira de Muay Thai 2025. Joelhadas e clinch são minha marca.", created: 18,
+  { id: "a2", song: "Till I Collapse — Eminem", name: "Camila Duarte", nick: "Furacão", sex: "Feminino", mods: ["Muay Thai", "K-1"], weight: "Palha (até 52kg)", arena: "Ring", city: "Rio de Janeiro / RJ", country: "Brasil", team: "Nova União", status: "Profissional", height: 162, reach: 164, age: 25, insta: "@camila.furacao", bio: "Campeã brasileira de Muay Thai 2025. Joelhadas e clinch são minha marca.", created: 18,
     rec: [22, 4, 1], ko: 9, sub: 0, dec: 13 },
-  { id: "a3", name: "Thiago Albuquerque", nick: "Mão de Pedra", sex: "Masculino", mods: ["Boxe"], weight: "Médio (até 84kg)", arena: "Ring", city: "São Paulo / SP", country: "Brasil", team: "Boxe Autêntico", status: "Profissional", height: 183, reach: 188, age: 31, insta: "@maodepedra", bio: "Pugilista com 80% de vitórias por nocaute.", created: 15,
+  { id: "a3", song: "Lose Yourself — Eminem", name: "Thiago Albuquerque", nick: "Mão de Pedra", sex: "Masculino", mods: ["Boxe"], weight: "Médio (até 84kg)", arena: "Ring", city: "São Paulo / SP", country: "Brasil", team: "Boxe Autêntico", status: "Profissional", height: 183, reach: 188, age: 31, insta: "@maodepedra", bio: "Pugilista com 80% de vitórias por nocaute.", created: 15,
     rec: [19, 2, 0], ko: 15, sub: 0, dec: 4 },
-  { id: "a4", name: "Larissa Prado", nick: "Anaconda", sex: "Feminino", mods: ["Submission", "MMA"], weight: "Pena (até 66kg)", arena: "Octógono", city: "Belo Horizonte / MG", country: "Brasil", team: "Alliance BH", status: "Profissional", height: 168, reach: 170, age: 27, insta: "@larissa.anaconda", bio: "Medalhista em ADCC Trials. Triângulo é minha arma.", created: 12,
+  { id: "a4", song: "Seven Nation Army — The White Stripes", name: "Larissa Prado", nick: "Anaconda", sex: "Feminino", mods: ["Submission", "MMA"], weight: "Pena (até 66kg)", arena: "Octógono", city: "Belo Horizonte / MG", country: "Brasil", team: "Alliance BH", status: "Profissional", height: 168, reach: 170, age: 27, insta: "@larissa.anaconda", bio: "Medalhista em ADCC Trials. Triângulo é minha arma.", created: 12,
     rec: [31, 6, 2], ko: 0, sub: 24, dec: 7 },
-  { id: "a5", name: "Diego Kawamura", nick: "Samurai", sex: "Masculino", mods: ["K-1", "Kickboxing"], weight: "Meio-médio (até 77kg)", arena: "Ring", city: "Londrina / PR", country: "Brasil", team: "Kawamura Kickboxing", status: "Profissional", height: 180, reach: 184, age: 29, insta: "@diego.samurai", bio: "Chutes altos e precisão. Atleta da seleção brasileira de Kickboxing.", created: 10,
+  { id: "a5", song: "Thunderstruck — AC/DC", name: "Diego Kawamura", nick: "Samurai", sex: "Masculino", mods: ["K-1", "Kickboxing"], weight: "Meio-médio (até 77kg)", arena: "Ring", city: "Londrina / PR", country: "Brasil", team: "Kawamura Kickboxing", status: "Profissional", height: 180, reach: 184, age: 29, insta: "@diego.samurai", bio: "Chutes altos e precisão. Atleta da seleção brasileira de Kickboxing.", created: 10,
     rec: [17, 5, 0], ko: 10, sub: 0, dec: 7 },
-  { id: "a6", name: "Bruno Ferraz", nick: "Tanque", sex: "Masculino", mods: ["MMA"], weight: "Pesado (até 120kg)", arena: "Octógono", city: "Manaus / AM", country: "Brasil", team: "Amazônia Fight", status: "Profissional", height: 191, reach: 198, age: 33, insta: "@bruno.tanque", bio: "Peso pesado com mão pesada e wrestling forte.", created: 9, sponsored: true,
+  { id: "a6", song: "Enter Sandman — Metallica", name: "Bruno Ferraz", nick: "Tanque", sex: "Masculino", mods: ["MMA"], weight: "Pesado (até 120kg)", arena: "Octógono", city: "Manaus / AM", country: "Brasil", team: "Amazônia Fight", status: "Profissional", height: 191, reach: 198, age: 33, insta: "@bruno.tanque", bio: "Peso pesado com mão pesada e wrestling forte.", created: 9, sponsored: true,
     rec: [11, 4, 0], ko: 8, sub: 1, dec: 2 },
-  { id: "a7", name: "Ana Beatriz Lopes", nick: "Bia Pitbull", sex: "Feminino", mods: ["MMA", "Muay Thai"], weight: "Mosca (até 57kg)", arena: "Octógono", city: "Natal / RN", country: "Brasil", team: "Pitbull Brothers", status: "Profissional", height: 165, reach: 168, age: 26, insta: "@biapitbull", bio: "Agressividade e cardio. Invicta nos últimos 6 combates.", created: 7,
+  { id: "a7", song: "Survivor — Destiny's Child", name: "Ana Beatriz Lopes", nick: "Bia Pitbull", sex: "Feminino", mods: ["MMA", "Muay Thai"], weight: "Mosca (até 57kg)", arena: "Octógono", city: "Natal / RN", country: "Brasil", team: "Pitbull Brothers", status: "Profissional", height: 165, reach: 168, age: 26, insta: "@biapitbull", bio: "Agressividade e cardio. Invicta nos últimos 6 combates.", created: 7,
     rec: [9, 1, 0], ko: 4, sub: 2, dec: 3 },
-  { id: "a8", name: "Matheus Rocha", nick: "Rochedo", sex: "Masculino", mods: ["Muay Thai"], weight: "Galo (até 61kg)", arena: "Ring", city: "Salvador / BA", country: "Brasil", team: "CT Rocha", status: "Amador", height: 168, reach: 171, age: 21, insta: "@matheus.rochedo", bio: "Jovem promessa do Muay Thai baiano.", created: 5,
+  { id: "a8", song: "Baianidade Nagô — Banda Mel", name: "Matheus Rocha", nick: "Rochedo", sex: "Masculino", mods: ["Muay Thai"], weight: "Galo (até 61kg)", arena: "Ring", city: "Salvador / BA", country: "Brasil", team: "CT Rocha", status: "Amador", height: 168, reach: 171, age: 21, insta: "@matheus.rochedo", bio: "Jovem promessa do Muay Thai baiano.", created: 5,
     rec: [8, 2, 0], ko: 5, sub: 0, dec: 3 },
-  { id: "a9", name: "Gustavo Henrique", nick: "Gigante", sex: "Masculino", mods: ["Submission", "MMA"], weight: "Meio-pesado (até 93kg)", arena: "Octógono", city: "Porto Alegre / RS", country: "Brasil", team: "Gracie Barra POA", status: "Profissional", height: 188, reach: 192, age: 30, insta: "@gustavo.gigante", bio: "Grappler de pressão, campeão do circuito sul de Submission.", created: 4,
+  { id: "a9", song: "Highway to Hell — AC/DC", name: "Gustavo Henrique", nick: "Gigante", sex: "Masculino", mods: ["Submission", "MMA"], weight: "Meio-pesado (até 93kg)", arena: "Octógono", city: "Porto Alegre / RS", country: "Brasil", team: "Gracie Barra POA", status: "Profissional", height: 188, reach: 192, age: 30, insta: "@gustavo.gigante", bio: "Grappler de pressão, campeão do circuito sul de Submission.", created: 4,
     rec: [26, 8, 1], ko: 0, sub: 18, dec: 8 },
-  { id: "a10", name: "Juliana Martins", nick: "Juju Kick", sex: "Feminino", mods: ["Kickboxing", "K-1"], weight: "Leve (até 70kg)", arena: "Ring", city: "Goiânia / GO", country: "Brasil", team: "Team Martins", status: "Profissional", height: 170, reach: 172, age: 24, insta: "@jujukick", bio: "Campeã sul-americana de K-1 Rules.", created: 3,
+  { id: "a10", song: "Run the World (Girls) — Beyoncé", name: "Juliana Martins", nick: "Juju Kick", sex: "Feminino", mods: ["Kickboxing", "K-1"], weight: "Leve (até 70kg)", arena: "Ring", city: "Goiânia / GO", country: "Brasil", team: "Team Martins", status: "Profissional", height: 170, reach: 172, age: 24, insta: "@jujukick", bio: "Campeã sul-americana de K-1 Rules.", created: 3,
     rec: [15, 3, 0], ko: 6, sub: 0, dec: 9 },
-  { id: "a11", name: "Leonardo Brito", nick: "Leão", sex: "Masculino", mods: ["MMA"], weight: "Pena (até 66kg)", arena: "Octógono", city: "Fortaleza / CE", country: "Brasil", team: "Evolução Thai", status: "Profissional", height: 173, reach: 178, age: 27, insta: "@leobrito.leao", bio: "Striker completo, faixa preta de Muay Thai.", created: 2,
+  { id: "a11", song: "Vida Loka, Parte II — Racionais MC's", name: "Leonardo Brito", nick: "Leão", sex: "Masculino", mods: ["MMA"], weight: "Pena (até 66kg)", arena: "Octógono", city: "Fortaleza / CE", country: "Brasil", team: "Evolução Thai", status: "Profissional", height: 173, reach: 178, age: 27, insta: "@leobrito.leao", bio: "Striker completo, faixa preta de Muay Thai.", created: 2,
     rec: [12, 2, 0], ko: 7, sub: 2, dec: 3 },
-  { id: "a12", name: "Pedro Sampaio", nick: "Professor", sex: "Masculino", mods: ["Submission", "MMA"], weight: "Médio (até 84kg)", arena: "Octógono", city: "Brasília / DF", country: "Brasil", team: "Checkmat DF", status: "Profissional", height: 181, reach: 183, age: 35, insta: "@pedro.professor", bio: "Veterano do Submission e do MMA, especialista em finalizações.", created: 1,
+  { id: "a12", song: "Tropa de Elite — Tihuana", name: "Pedro Sampaio", nick: "Professor", sex: "Masculino", mods: ["Submission", "MMA"], weight: "Médio (até 84kg)", arena: "Octógono", city: "Brasília / DF", country: "Brasil", team: "Checkmat DF", status: "Profissional", height: 181, reach: 183, age: 35, insta: "@pedro.professor", bio: "Veterano do Submission e do MMA, especialista em finalizações.", created: 1,
     rec: [40, 11, 3], ko: 0, sub: 29, dec: 11 },
 ];
 
@@ -1030,6 +1061,21 @@ function avatarHTML(a, extraStyle = "") {
     : `background:linear-gradient(135deg, ${m.grad[0]}, ${m.grad[1]})`) + ";" + extraStyle;
   return `<div class="avatar" style="${style}">${a.photo ? "" : esc(initials(a.name))}</div>`;
 }
+function portraitHTML(a, extraStyle = "") {
+  const m = mainMod(a);
+  const style = (a.photo
+    ? `background-image:url('${a.photo}')`
+    : `background:radial-gradient(circle at 50% 35%, ${m.color}66, transparent 60%), linear-gradient(165deg, ${m.grad[0]}, ${m.grad[1]} 55%, #0d0d10)`) + ";" + extraStyle;
+  return `<div class="portrait" style="${style}">${a.photo ? "" : esc(initials(a.name))}</div>`;
+}
+
+const NOTE_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 18.5a3.5 3.5 0 1 1-2-3.16V5.2a1 1 0 0 1 .76-.97l10-2.5A1 1 0 0 1 19 2.7v12.8a3.5 3.5 0 1 1-2-3.16V6.03l-8 2V18.5z"/></svg>`;
+const songUrl = a => a.songUrl || "https://www.youtube.com/results?search_query=" + encodeURIComponent(a.song);
+function musicBtn(a) {
+  if (!a.song) return "";
+  return `<a class="music-btn" data-music href="${esc(songUrl(a))}" target="_blank" rel="noopener" title="Música do atleta: ${esc(a.song)}" aria-label="Ouvir a música do atleta: ${esc(a.song)}">${NOTE_SVG}</a>`;
+}
+
 function topBg(a) {
   const m = mainMod(a);
   return `background: radial-gradient(circle at 50% 60%, ${m.color}55, transparent 65%), linear-gradient(160deg, ${m.grad[1]}, #0d0d10)`;
@@ -1076,15 +1122,16 @@ function athleteCard(a) {
   return `
     <article class="athlete" data-id="${a.id}" tabindex="0" aria-label="Ver perfil de ${esc(a.name)}">
       <div class="athlete-top" style="${topBg(a)}">
+        ${portraitHTML(a)}
         <span class="badge-mod" style="color:${m.color}">${esc(a.mods[0])}</span>
         ${a.isNew ? `<span class="badge-new">NOVO</span>` : `<span class="score-ring"><small>FS</small>${fighterScore(a)}</span>`}
-        ${avatarHTML(a)}
-      </div>
-      <div class="athlete-body">
-        <div>
+        <div class="athlete-title" style="padding-right:${a.song ? 54 : 14}px">
           <div class="athlete-name">${esc(a.name)}</div>
           ${a.nick ? `<div class="athlete-nick">“${esc(a.nick)}”</div>` : ""}
         </div>
+        ${musicBtn(a)}
+      </div>
+      <div class="athlete-body">
         <div class="athlete-meta">
           <span>${esc(a.weight.split(" (")[0])}</span>
           <span>${esc(a.arena)}</span>
@@ -1143,7 +1190,7 @@ function renderFeatured() {
   $("#featured").innerHTML = `
     <div class="featured-label"><span>DESTAQUE DA SEMANA</span><span class="pill">FS ${fighterScore(a)}</span></div>
     <div style="display:flex;gap:16px;align-items:center;cursor:pointer" data-id="${a.id}" class="feat-open">
-      ${avatarHTML(a, "width:96px;height:96px;font-size:40px")}
+      ${portraitHTML(a, "width:86px;font-size:44px")}
       <div>
         <div class="display" style="font-size:38px;line-height:1">${esc(a.name)}</div>
         <div class="athlete-nick">“${esc(a.nick)}” · ${esc(a.mods.join(" / "))}</div>
@@ -1259,8 +1306,8 @@ function openProfile(id, pushHash = true) {
 
   $("#profileContent").innerHTML = `
     <div class="profile-hero" style="background:linear-gradient(120deg, ${m.grad[0]}, ${m.grad[1]} 60%, #0b0b0d)">
-      ${avatarHTML(a)}
-      <div>
+      ${portraitHTML(a)}
+      <div class="hero-info">
         <h3>${esc(a.name)}</h3>
         ${a.nick ? `<div class="nick">“${esc(a.nick)}”</div>` : ""}
         <div class="profile-tags">
@@ -1268,6 +1315,7 @@ function openProfile(id, pushHash = true) {
           <span class="pill">${esc(a.weight)}</span>
           <span class="pill">${esc(a.status)}</span>
         </div>
+        ${a.song ? `<div class="song">${musicBtn(a)}<span><small>Música do atleta</small>${esc(a.song)}</span></div>` : ""}
       </div>
       <div class="profile-score"><b>${fighterScore(a)}</b><span>FIGHTER SCORE</span></div>
     </div>
@@ -1397,11 +1445,11 @@ function initRegisterForm() {
     if (!file) return;
     const img = new Image();
     img.onload = () => {
-      // reduz a foto para caber no armazenamento local
+      // recorta em 9:16 (padrão 1080 × 1920) e reduz para caber no armazenamento local
       const c = document.createElement("canvas");
-      const s = 240, k = Math.max(s / img.width, s / img.height);
-      c.width = c.height = s;
-      c.getContext("2d").drawImage(img, (s - img.width * k) / 2, (s - img.height * k) / 2, img.width * k, img.height * k);
+      const w = 540, h = 960, k = Math.max(w / img.width, h / img.height);
+      c.width = w; c.height = h;
+      c.getContext("2d").drawImage(img, (w - img.width * k) / 2, (h - img.height * k) / 2, img.width * k, img.height * k);
       photoData = c.toDataURL("image/jpeg", .8);
       const p = $("#photoPreview");
       p.style.backgroundImage = `url('${photoData}')`;
@@ -1442,6 +1490,8 @@ function initRegisterForm() {
       status: $("#rStatus").value,
       bio: $("#rBio").value.trim(),
       insta: $("#rInsta").value.trim(),
+      song: $("#rSong").value.trim(),
+      songUrl: /^https?:\/\//.test($("#rSongUrl").value.trim()) ? $("#rSongUrl").value.trim() : "",
       age, photo: photoData, fights,
       created: Date.now(), isNew: true,
     };
@@ -1537,6 +1587,8 @@ document.addEventListener("click", e => {
     return;
   }
   if (t.closest("[data-close]") || t.classList.contains("overlay")) { closeModals(); return; }
+
+  if (t.closest("[data-music]")) return; // abre o link da música em nova aba
 
   const slot = t.closest("[data-slot]");
   if (slot) { e.stopPropagation(); openSponsor(slot.dataset.slot); return; }
