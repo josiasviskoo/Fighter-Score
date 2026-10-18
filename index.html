@@ -1,0 +1,1600 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fighter Score — Plataforma de Atletas de Luta</title>
+<meta name="description" content="Cadastro público de atletas de MMA, Muay Thai, K-1, Submission e mais. Cartel de lutas, eventos de Ring e Octógono e espaços de patrocínio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b0d;
+    --bg-2: #121216;
+    --card: #17171c;
+    --card-2: #1e1e25;
+    --line: #2a2a33;
+    --text: #f2f2f4;
+    --muted: #9a9aa6;
+    --red: #e10600;
+    --red-2: #ff2d20;
+    --gold: #f5b400;
+    --green: #22c55e;
+    --blue: #3b82f6;
+    --radius: 14px;
+    --shadow: 0 10px 30px rgba(0,0,0,.45);
+    --font-display: "Bebas Neue", Impact, sans-serif;
+    --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  img { max-width: 100%; display: block; }
+  .wrap { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+  .display { font-family: var(--font-display); letter-spacing: .5px; font-weight: 400; }
+
+  /* ---------- Espaços de patrocínio ---------- */
+  .ad {
+    position: relative;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    gap: 4px; text-align: center;
+    border: 1.5px dashed #3a3a46;
+    border-radius: var(--radius);
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,.015) 0 12px, transparent 12px 24px),
+      var(--bg-2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color .2s, color .2s, transform .2s;
+  }
+  .ad:hover { border-color: var(--gold); color: var(--text); }
+  .ad .ad-tag {
+    position: absolute; top: 8px; left: 10px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--gold);
+  }
+  .ad .ad-size { font-size: 11px; opacity: .7; }
+  .ad strong { color: var(--text); font-size: 15px; }
+  .ad .ad-cta { font-size: 12px; color: var(--gold); font-weight: 600; }
+  .ad-leaderboard { min-height: 90px; margin: 12px 0; }
+  .ad-rect { min-height: 250px; }
+  .ad-skyscraper { min-height: 420px; }
+  .ad-inline { min-height: 100%; }
+  .ad.filled {
+    border-style: solid; border-color: var(--line);
+    background: linear-gradient(135deg, #1a1405, #2a1f04);
+  }
+  .ad.filled strong { color: var(--gold); font-family: var(--font-display); font-size: 28px; letter-spacing: 1px; }
+
+  /* ---------- Header ---------- */
+  header.top {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(11,11,13,.88);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; gap: 24px; height: 68px; }
+  .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .logo-text { font-family: var(--font-display); font-size: 28px; letter-spacing: 1px; line-height: 1; }
+  .logo-text span { color: var(--red-2); }
+  .nav-links { display: flex; gap: 4px; margin-left: 8px; }
+  .nav-links a {
+    padding: 8px 12px; border-radius: 8px; color: var(--muted); font-weight: 500; font-size: 14px;
+  }
+  .nav-links a:hover { color: var(--text); background: var(--card); }
+  .nav-actions { margin-left: auto; display: flex; gap: 8px; }
+  .menu-btn { display: none; margin-left: auto; background: none; border: 1px solid var(--line); border-radius: 8px; width: 42px; height: 42px; cursor: pointer; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 10px 18px; border-radius: 10px; border: 1px solid transparent;
+    font-weight: 600; font-size: 14px; cursor: pointer; white-space: nowrap;
+    transition: transform .15s, background .2s, border-color .2s;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-red:hover { background: var(--red-2); }
+  .btn-gold { background: var(--gold); color: #111; }
+  .btn-gold:hover { background: #ffc629; }
+  .btn-ghost { background: transparent; border-color: var(--line); }
+  .btn-ghost:hover { border-color: #444; background: var(--card); }
+  .btn-sm { padding: 7px 12px; font-size: 13px; }
+  .btn-lg { padding: 14px 24px; font-size: 16px; }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; overflow: hidden; padding: 48px 0 36px; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(600px 300px at 15% 20%, rgba(225,6,0,.22), transparent 70%),
+      radial-gradient(500px 300px at 90% 80%, rgba(245,180,0,.10), transparent 70%);
+  }
+  .hero-grid { position: relative; display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--red-2); background: rgba(225,6,0,.1); border: 1px solid rgba(225,6,0,.3);
+    padding: 6px 12px; border-radius: 999px;
+  }
+  .hero h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(48px, 8vw, 92px); line-height: .92; margin: 18px 0 16px; letter-spacing: 1px; }
+  .hero h1 em { font-style: normal; color: var(--red-2); }
+  .hero p.lead { color: var(--muted); font-size: 18px; max-width: 540px; margin: 0 0 26px; }
+  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .stats { display: flex; gap: 32px; margin-top: 34px; flex-wrap: wrap; }
+  .stat b { display: block; font-family: var(--font-display); font-size: 40px; line-height: 1; }
+  .stat span { color: var(--muted); font-size: 13px; }
+
+  .featured {
+    position: relative; background: linear-gradient(160deg, var(--card-2), var(--card));
+    border: 1px solid var(--line); border-radius: 20px; padding: 22px; box-shadow: var(--shadow);
+  }
+  .featured-label { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); margin-bottom: 14px; gap: 8px; }
+  .featured-label .pill { color: var(--gold); border-color: rgba(245,180,0,.4); }
+  .presented {
+    margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-size: 12px; color: var(--muted);
+  }
+  .presented .mini-ad {
+    border: 1px dashed #3a3a46; border-radius: 8px; padding: 6px 12px; color: var(--gold); font-weight: 600; cursor: pointer;
+  }
+
+  /* ---------- Faixa de modalidades ---------- */
+  .modal-strip { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg-2); }
+  .modal-strip .wrap { display: flex; gap: 10px; overflow-x: auto; padding-top: 14px; padding-bottom: 14px; scrollbar-width: none; }
+  .modal-strip .wrap::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card);
+    font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted);
+  }
+  .chip:hover { color: var(--text); border-color: #444; }
+  .chip.active { background: var(--red); border-color: var(--red); color: #fff; }
+  .chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ---------- Seções ---------- */
+  section.block { padding: 48px 0; }
+  .sec-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+  .sec-head h2 { font-family: var(--font-display); font-weight: 400; font-size: 44px; line-height: 1; margin: 0; letter-spacing: .5px; }
+  .sec-head p { margin: 6px 0 0; color: var(--muted); }
+
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; }
+  aside.side { display: flex; flex-direction: column; gap: 20px; }
+  .side-sticky { position: sticky; top: 84px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* Filtros */
+  .filters {
+    display: grid; grid-template-columns: 2fr repeat(4, 1fr); gap: 10px;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; margin-bottom: 18px;
+  }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12px; font-weight: 600; color: var(--muted); }
+  .input, select.input, textarea.input {
+    width: 100%; background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px;
+    padding: 10px 12px; font-size: 14px; outline: none; transition: border-color .2s;
+  }
+  .input:focus { border-color: var(--red); }
+  select.input { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 30px; }
+  .result-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; color: var(--muted); font-size: 14px; gap: 10px; flex-wrap: wrap; }
+  .seg { display: inline-flex; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 3px; }
+  .seg button { background: none; border: 0; padding: 6px 12px; border-radius: 8px; font-size: 13px; color: var(--muted); cursor: pointer; font-weight: 600; }
+  .seg button.active { background: var(--card-2); color: var(--text); }
+
+  /* Cards de atleta */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+  .athlete {
+    position: relative; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    overflow: hidden; cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s;
+    display: flex; flex-direction: column;
+  }
+  .athlete:hover { transform: translateY(-3px); border-color: #3a3a46; box-shadow: var(--shadow); }
+  .athlete-top { position: relative; height: 150px; display: grid; place-items: center; overflow: hidden; }
+  .athlete-top .avatar { width: 92px; height: 92px; font-size: 38px; }
+  .athlete-top::after { content: ""; position: absolute; inset: auto 0 0 0; height: 50%; background: linear-gradient(transparent, var(--card)); }
+  .badge-mod {
+    position: absolute; top: 10px; left: 10px; z-index: 2;
+    font-size: 11px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase;
+    padding: 4px 8px; border-radius: 6px; background: rgba(0,0,0,.55); backdrop-filter: blur(4px);
+  }
+  .badge-new { position: absolute; top: 10px; right: 10px; z-index: 2; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: var(--green); color: #04130a; }
+  .score-ring {
+    position: absolute; top: 10px; right: 10px; z-index: 2;
+    background: rgba(0,0,0,.6); border: 1px solid rgba(245,180,0,.45); color: var(--gold);
+    border-radius: 8px; padding: 3px 8px; font-family: var(--font-display); font-size: 18px; line-height: 1.2;
+  }
+  .score-ring small { font-family: var(--font); font-size: 9px; font-weight: 700; letter-spacing: 1px; color: var(--muted); margin-right: 4px; }
+  .athlete-body { padding: 4px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .athlete-name { font-weight: 700; font-size: 16px; line-height: 1.2; }
+  .athlete-nick { color: var(--red-2); font-size: 13px; font-weight: 600; }
+  .athlete-meta { display: flex; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+  .athlete-meta span { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; }
+  .record { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: auto; }
+  .record div { background: var(--bg-2); border-radius: 8px; text-align: center; padding: 6px 0; }
+  .record b { display: block; font-family: var(--font-display); font-size: 24px; line-height: 1; }
+  .record small { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: .8px; }
+  .record .w b { color: var(--green); }
+  .record .l b { color: var(--red-2); }
+
+  .avatar {
+    border-radius: 50%; display: grid; place-items: center; flex-shrink: 0;
+    font-family: var(--font-display); color: #fff; position: relative; z-index: 1;
+    border: 3px solid rgba(255,255,255,.12);
+    background-size: cover; background-position: center;
+  }
+
+  .empty { grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: var(--muted); border: 1px dashed var(--line); border-radius: var(--radius); }
+
+  /* Ranking lateral */
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+  .panel h3 { margin: 0 0 12px; font-family: var(--font-display); font-weight: 400; font-size: 24px; letter-spacing: .5px; display: flex; justify-content: space-between; align-items: center; }
+  .rank-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+  .rank-item:last-child { border-bottom: 0; }
+  .rank-pos { font-family: var(--font-display); font-size: 22px; width: 22px; color: var(--muted); }
+  .rank-item:first-child .rank-pos { color: var(--gold); }
+  .rank-item .avatar { width: 36px; height: 36px; font-size: 16px; border-width: 2px; }
+  .rank-info { flex: 1; min-width: 0; }
+  .rank-info b { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rank-info span { font-size: 11px; color: var(--muted); }
+  .rank-score { font-family: var(--font-display); color: var(--gold); font-size: 20px; }
+
+  /* Eventos */
+  .events { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .event { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+  .event-head { padding: 18px; position: relative; min-height: 130px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .event-head.ring { background: linear-gradient(135deg, #1b2b4f, #0e1424); }
+  .event-head.octo { background: linear-gradient(135deg, #4a0a08, #1a0605); }
+  .event-new { position: absolute; top: 36px; left: 18px; font-size: 10px; font-weight: 800; padding: 3px 7px; border-radius: 6px; background: var(--green); color: #04130a; }
+  .tbd { background: var(--bg-2); border: 1px dashed var(--line); border-radius: 10px; padding: 14px; text-align: center; color: var(--muted); font-size: 13px; }
+  .event-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .event-tags span { font-size: 11px; font-weight: 600; color: var(--muted); background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; }
+  .event-tags .open { color: var(--green); border-color: rgba(34,197,94,.4); }
+  .organizer-cta {
+    margin-top: 24px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; align-items: center;
+    background: radial-gradient(500px 220px at 0% 0%, rgba(225,6,0,.18), transparent 70%), var(--card);
+    border: 1px solid var(--line); border-radius: 20px; padding: 28px;
+  }
+  .organizer-cta h3 { margin: 0 0 8px; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 1; }
+  .organizer-cta p { margin: 0 0 18px; color: var(--muted); }
+  .organizer-cta ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; font-size: 14px; color: #cfcfd6; }
+  .organizer-cta li { display: flex; gap: 10px; }
+  .organizer-cta li::before { content: "✓"; color: var(--green); font-weight: 800; }
+  .event-type { position: absolute; top: 14px; left: 18px; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; }
+  .event-date { position: absolute; top: 12px; right: 14px; text-align: center; background: rgba(0,0,0,.4); border-radius: 10px; padding: 6px 10px; }
+  .event-date b { display: block; font-family: var(--font-display); font-size: 26px; line-height: 1; }
+  .event-date span { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+  .event-head h4 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1; letter-spacing: .5px; }
+  .event-head p { margin: 4px 0 0; font-size: 13px; color: #c9c9d1; }
+  .event-body { padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+  .main-card { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--bg-2); border-radius: 10px; padding: 10px 12px; }
+  .main-card .side-f { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 13px; font-weight: 600; }
+  .main-card .side-f:last-child { flex-direction: row-reverse; text-align: right; }
+  .main-card .side-f span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .main-card .avatar { width: 34px; height: 34px; font-size: 15px; border-width: 2px; }
+  .vs { font-family: var(--font-display); font-size: 20px; color: var(--red-2); flex-shrink: 0; }
+  .event-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-top: auto; }
+  .event-sponsor { border: 1px dashed #3a3a46; border-radius: 8px; padding: 4px 10px; color: var(--gold); font-weight: 600; cursor: pointer; }
+
+  /* Patrocínio */
+  .sponsor-hero {
+    background: radial-gradient(500px 240px at 85% 0%, rgba(245,180,0,.18), transparent 70%), var(--card);
+    border: 1px solid var(--line); border-radius: 20px; padding: 32px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: center;
+  }
+  .sponsor-hero h2 { font-family: var(--font-display); font-weight: 400; font-size: 52px; line-height: .95; margin: 10px 0 12px; }
+  .sponsor-hero h2 span { color: var(--gold); }
+  .sponsor-hero p { color: var(--muted); margin: 0 0 20px; }
+  .slot-map { background: var(--bg-2); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: grid; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; }
+  .slot-map div { border-radius: 6px; padding: 8px; display: flex; align-items: center; justify-content: center; text-align: center; }
+  .slot-map .s-content { background: #22222a; color: var(--muted); }
+  .slot-map .s-ad { background: rgba(245,180,0,.14); color: var(--gold); border: 1px dashed rgba(245,180,0,.5); }
+  .slot-row { display: grid; grid-template-columns: 1fr 1fr 1fr 90px; gap: 8px; }
+
+
+  .sponsor-logos { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .sponsor-logos .ad { min-height: 70px; border-radius: 10px; font-size: 12px; }
+
+  /* Como funciona */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+  .step-n { font-family: var(--font-display); font-size: 48px; line-height: 1; color: var(--red-2); }
+  .step h4 { margin: 6px 0 6px; font-size: 18px; }
+  .step p { margin: 0; color: var(--muted); font-size: 14px; }
+
+  footer { border-top: 1px solid var(--line); padding: 36px 0; margin-top: 30px; color: var(--muted); font-size: 14px; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 24px; }
+  footer h5 { color: var(--text); margin: 0 0 10px; font-size: 14px; }
+  footer ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+  footer a:hover { color: var(--text); }
+
+  /* ---------- Modais ---------- */
+  .overlay {
+    position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,.72); backdrop-filter: blur(6px);
+    display: none; align-items: flex-start; justify-content: center; padding: 30px 16px; overflow-y: auto;
+  }
+  .overlay.open { display: flex; }
+  .dialog {
+    width: 100%; max-width: 860px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 20px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.6); position: relative; animation: pop .22s ease-out;
+  }
+  .dialog.narrow { max-width: 680px; }
+  @keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+  .close-x { position: absolute; top: 14px; right: 14px; z-index: 5; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: rgba(0,0,0,.5); cursor: pointer; font-size: 18px; }
+  .close-x:hover { background: var(--card-2); }
+  .dlg-pad { padding: 26px; }
+  .dlg-title { font-family: var(--font-display); font-weight: 400; font-size: 38px; margin: 0 0 4px; line-height: 1; }
+  .dlg-sub { color: var(--muted); margin: 0 0 20px; font-size: 14px; }
+
+  /* Perfil */
+  .profile-hero { position: relative; padding: 28px 26px 22px; border-radius: 20px 20px 0 0; display: flex; gap: 22px; align-items: center; overflow: hidden; }
+  .profile-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.25), rgba(0,0,0,.65)); }
+  .profile-hero > * { position: relative; z-index: 1; }
+  .profile-hero .avatar { width: 120px; height: 120px; font-size: 50px; }
+  .profile-hero h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 46px; line-height: .95; }
+  .profile-hero .nick { color: #ffd9d6; font-weight: 600; }
+  .profile-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .pill { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.15); }
+  .profile-score { margin-left: auto; text-align: center; background: rgba(0,0,0,.45); border: 1px solid rgba(245,180,0,.5); border-radius: 14px; padding: 10px 16px; }
+  .profile-score b { display: block; font-family: var(--font-display); font-size: 48px; line-height: 1; color: var(--gold); }
+  .profile-score span { font-size: 10px; font-weight: 800; letter-spacing: 1.4px; color: var(--muted); }
+  .profile-body { padding: 22px 26px 26px; display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 22px; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+  .kpi { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; text-align: center; }
+  .kpi b { display: block; font-family: var(--font-display); font-size: 32px; line-height: 1; }
+  .kpi span { font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: .5px; }
+  .bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--card); margin: 4px 0 6px; }
+  .bar i { display: block; height: 100%; }
+  .bar-legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+  .bar-legend span::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 5px; background: var(--c); }
+  h5.sub { margin: 20px 0 10px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+  table.fights { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.fights th { text-align: left; color: var(--muted); font-weight: 600; font-size: 11px; letter-spacing: .6px; text-transform: uppercase; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+  table.fights td { padding: 10px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .res { display: inline-block; width: 26px; height: 26px; border-radius: 6px; text-align: center; line-height: 26px; font-weight: 800; font-size: 12px; }
+  .res.V { background: rgba(34,197,94,.15); color: var(--green); }
+  .res.D { background: rgba(225,6,0,.15); color: var(--red-2); }
+  .res.E { background: rgba(154,154,166,.15); color: var(--muted); }
+  .table-scroll { overflow-x: auto; }
+  .info-list { display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
+  .info-list div { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  .info-list span { color: var(--muted); }
+  .info-list b { text-align: right; font-weight: 600; }
+  .share-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .athlete-sponsors { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .athlete-sponsors .ad { min-height: 60px; font-size: 11px; border-radius: 10px; }
+
+  /* Formulários */
+  .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  .form-sec { margin: 22px 0 12px; font-size: 12px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--red-2); display: flex; align-items: center; gap: 10px; }
+  .form-sec::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .check-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .check-group label { cursor: pointer; }
+  .check-group input { position: absolute; opacity: 0; pointer-events: none; }
+  .check-group span { display: inline-block; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); font-size: 13px; font-weight: 600; color: var(--muted); }
+  .check-group input:checked + span { background: var(--red); border-color: var(--red); color: #fff; }
+  .check-group input:focus-visible + span { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .fight-row { display: grid; grid-template-columns: 1.3fr 1.3fr .8fr 1fr .6fr 36px; gap: 8px; margin-bottom: 8px; }
+  .fight-row .input { padding: 8px 10px; font-size: 13px; }
+  .icon-btn { width: 36px; height: 38px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); cursor: pointer; }
+  .icon-btn:hover { border-color: var(--red); color: var(--red-2); }
+  .form-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+  .terms { font-size: 12px; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; max-width: 440px; }
+  .photo-drop { display: flex; align-items: center; gap: 14px; }
+  .photo-drop .avatar { width: 64px; height: 64px; font-size: 26px; background: var(--card-2); }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 30px); opacity: 0; z-index: 200;
+    background: var(--card-2); border: 1px solid var(--line); border-left: 4px solid var(--green);
+    padding: 12px 18px; border-radius: 10px; box-shadow: var(--shadow); font-size: 14px; font-weight: 600;
+    transition: all .3s; pointer-events: none; max-width: calc(100% - 32px);
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ---------- Responsivo ---------- */
+  @media (max-width: 1080px) {
+    .sponsor-logos { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 960px) {
+    .nav-links, .nav-actions { display: none; }
+    .menu-btn { display: block; }
+    header.top.menu-open .nav { flex-wrap: wrap; height: auto; padding: 12px 0; }
+    header.top.menu-open .nav-links { display: flex; flex-direction: column; width: 100%; order: 3; margin: 0; }
+    header.top.menu-open .nav-actions { display: flex; width: 100%; order: 4; margin: 0 0 6px; }
+    header.top.menu-open .nav-actions .btn { flex: 1; }
+    .hero-grid { grid-template-columns: 1fr; }
+    .layout { grid-template-columns: 1fr; }
+    .side-sticky { position: static; }
+    .ad-skyscraper { min-height: 120px; }
+    .filters { grid-template-columns: 1fr 1fr; }
+    .filters .field:first-child { grid-column: 1 / -1; }
+    .sponsor-hero { grid-template-columns: 1fr; padding: 22px; }
+    .organizer-cta { grid-template-columns: 1fr; padding: 22px; }
+    .steps { grid-template-columns: 1fr; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+    .profile-body { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .sponsor-logos { grid-template-columns: repeat(2, 1fr); }
+    .form-grid { grid-template-columns: 1fr; }
+    .fight-row { grid-template-columns: 1fr 1fr; }
+    .fight-row .icon-btn { width: 100%; }
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .profile-hero { flex-wrap: wrap; padding: 26px 18px 18px; }
+    .profile-hero .avatar { width: 88px; height: 88px; font-size: 36px; }
+    .profile-hero h3 { font-size: 36px; }
+    .profile-score { margin-left: 0; }
+    .profile-body, .dlg-pad { padding: 18px; }
+      .sec-head h2 { font-size: 36px; }
+    .slot-row { grid-template-columns: 1fr 1fr; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+    .athlete-top { height: 120px; }
+    .athlete-top .avatar { width: 72px; height: 72px; font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ESPAÇO DE PATROCÍNIO #1 — Topo (leaderboard) -->
+<div class="wrap">
+  <div class="ad ad-leaderboard" data-slot="Topo do site (Leaderboard)">
+    <span class="ad-tag">Patrocínio</span>
+    <strong>Sua marca aqui — Banner principal do Fighter Score</strong>
+    <span class="ad-size">970 × 90 · visível em todas as páginas</span>
+    <span class="ad-cta">Anuncie aqui →</span>
+  </div>
+</div>
+
+<header class="top" id="top">
+  <div class="wrap nav">
+    <a href="#" class="logo" aria-label="Fighter Score — início">
+      <div class="logo-text">FIGHTER<span>SCORE</span></div>
+    </a>
+    <nav class="nav-links" aria-label="Principal">
+      <a href="#atletas">Atletas</a>
+      <a href="#eventos">Eventos</a>
+      <a href="#" data-open="eventModal">Cadastrar evento</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#patrocinio">Patrocínio</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn btn-ghost" data-open="sponsorModal">Seja patrocinador</button>
+      <button class="btn btn-red" data-open="registerModal">Cadastrar atleta</button>
+    </div>
+    <button class="menu-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">● Cadastro aberto e gratuito</span>
+      <h1>Seu cartel.<br>Seu <em>score.</em><br>Sua vitrine.</h1>
+      <p class="lead">A plataforma pública de atletas de MMA, Muay Thai, K-1, Kickboxing, Boxe e Submission. Cadastre-se, registre suas lutas de Ring e Octógono e compartilhe seu perfil com promotores e patrocinadores.</p>
+      <div class="hero-ctas">
+        <button class="btn btn-red btn-lg" data-open="registerModal">Criar meu perfil de atleta</button>
+        <a href="#atletas" class="btn btn-ghost btn-lg">Ver atletas</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="statAthletes">0</b><span>atletas cadastrados</span></div>
+        <div class="stat"><b id="statFights">0</b><span>lutas registradas</span></div>
+        <div class="stat"><b id="statMods">0</b><span>modalidades</span></div>
+        <div class="stat"><b id="statEvents">0</b><span>eventos no calendário</span></div>
+      </div>
+    </div>
+
+    <div class="featured" id="featured"></div>
+  </div>
+</section>
+
+<!-- Modalidades -->
+<div class="modal-strip">
+  <div class="wrap" id="modChips"></div>
+</div>
+
+<!-- ATLETAS -->
+<section class="block" id="atletas">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>Atletas cadastrados</h2>
+        <p>Explore perfis, cartéis e o Fighter Score de cada lutador.</p>
+      </div>
+      <button class="btn btn-red" data-open="registerModal">+ Cadastrar atleta</button>
+    </div>
+
+    <div class="layout">
+      <div>
+        <div class="filters">
+          <div class="field">
+            <label for="fSearch">Buscar</label>
+            <input class="input" id="fSearch" type="search" placeholder="Nome, apelido, equipe ou cidade…">
+          </div>
+          <div class="field">
+            <label for="fMod">Modalidade</label>
+            <select class="input" id="fMod"><option value="">Todas</option></select>
+          </div>
+          <div class="field">
+            <label for="fArena">Arena</label>
+            <select class="input" id="fArena">
+              <option value="">Todas</option>
+              <option>Octógono</option>
+              <option>Ring</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fWeight">Categoria</label>
+            <select class="input" id="fWeight"><option value="">Todas</option></select>
+          </div>
+          <div class="field">
+            <label for="fSex">Gênero</label>
+            <select class="input" id="fSex">
+              <option value="">Todos</option>
+              <option>Masculino</option>
+              <option>Feminino</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="result-bar">
+          <span id="resultCount"></span>
+          <div class="seg" role="group" aria-label="Ordenar">
+            <button data-sort="score" class="active">Score</button>
+            <button data-sort="wins">Vitórias</button>
+            <button data-sort="recent">Recentes</button>
+            <button data-sort="name">A–Z</button>
+          </div>
+        </div>
+
+        <div class="grid" id="grid"></div>
+      </div>
+
+      <aside class="side">
+        <div class="side-sticky">
+          <!-- ESPAÇO DE PATROCÍNIO #2 — Lateral (retângulo) -->
+          <div class="ad ad-rect" data-slot="Lateral — Retângulo médio">
+            <span class="ad-tag">Patrocínio</span>
+            <strong>Retângulo lateral</strong>
+            <span class="ad-size">300 × 250</span>
+            <span class="ad-cta">Anuncie aqui →</span>
+          </div>
+
+          <div class="panel">
+            <h3>Top Fighter Score <span class="pill" style="font-family:var(--font)">Geral</span></h3>
+            <div id="ranking"></div>
+          </div>
+
+          <!-- ESPAÇO DE PATROCÍNIO #3 — Lateral (arranha-céu) -->
+          <div class="ad ad-skyscraper" data-slot="Lateral — Arranha-céu">
+            <span class="ad-tag">Patrocínio</span>
+            <strong>Banner vertical</strong>
+            <span class="ad-size">300 × 600</span>
+            <span class="ad-cta">Anuncie aqui →</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ESPAÇO DE PATROCÍNIO #4 — Faixa entre seções -->
+<div class="wrap">
+  <div class="ad ad-leaderboard" style="min-height:120px" data-slot="Faixa entre seções (Billboard)">
+    <span class="ad-tag">Patrocínio</span>
+    <strong>Billboard — apresente sua marca para a comunidade da luta</strong>
+    <span class="ad-size">1200 × 120</span>
+    <span class="ad-cta">Anuncie aqui →</span>
+  </div>
+</div>
+
+<!-- EVENTOS -->
+<section class="block" id="eventos">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>Próximas competições</h2>
+        <p>Eventos de Ring e Octógono com atletas da plataforma.</p>
+      </div>
+      <div class="seg" role="group" aria-label="Filtrar eventos">
+        <button data-ev="" class="active">Todos</button>
+        <button data-ev="Octógono">Octógono</button>
+        <button data-ev="Ring">Ring</button>
+      </div>
+    </div>
+    <div class="events" id="events"></div>
+
+    <!-- Cadastro de eventos (organizadores) -->
+    <div class="organizer-cta" id="cadastro-evento">
+      <div>
+        <span class="eyebrow">● Para organizadores</span>
+        <h3 style="margin-top:14px">Organiza uma competição?<br>Cadastre seu evento.</h3>
+        <p>Divulgue seu evento de Ring ou Octógono para a comunidade, monte o card com atletas da plataforma e receba inscrições de lutadores.</p>
+        <button class="btn btn-red btn-lg" data-open="eventModal">Cadastrar evento</button>
+      </div>
+      <ul>
+        <li>Página do evento no calendário do Fighter Score</li>
+        <li>Luta principal com perfis dos atletas cadastrados</li>
+        <li>Inscrições abertas para atletas completarem o card</li>
+        <li>Resultados entram automaticamente no cartel dos atletas</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="block" id="como-funciona">
+  <div class="wrap">
+    <div class="sec-head"><div><h2>Como funciona</h2><p>Do cadastro ao patrocínio em três passos.</p></div></div>
+    <div class="steps">
+      <div class="step"><div class="step-n">01</div><h4>Cadastre-se grátis</h4><p>Qualquer atleta cria seu perfil com modalidade, categoria, equipe e foto. Sem burocracia.</p></div>
+      <div class="step"><div class="step-n">02</div><h4>Registre seu cartel</h4><p>Adicione suas lutas de Ring ou Octógono. O Fighter Score é calculado automaticamente.</p></div>
+      <div class="step"><div class="step-n">03</div><h4>Compartilhe e seja visto</h4><p>Envie seu link para promotores, matchmakers e marcas. Atletas em destaque atraem patrocínio.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PATROCÍNIO -->
+<section class="block" id="patrocinio">
+  <div class="wrap">
+    <div class="sponsor-hero">
+      <div>
+        <span class="eyebrow" style="color:var(--gold);background:rgba(245,180,0,.1);border-color:rgba(245,180,0,.35)">● Para empresas</span>
+        <h2>Patrocine o <span>Fighter Score</span></h2>
+        <p>Coloque sua marca diante de milhares de atletas, treinadores, academias e fãs de luta. Escolha os espaços, patrocine atletas individualmente ou dê nome a eventos.</p>
+        <div class="hero-ctas">
+          <button class="btn btn-gold btn-lg" data-open="sponsorModal">Cadastrar minha empresa</button>
+        </div>
+      </div>
+      <div>
+        <div class="slot-map" aria-label="Mapa dos espaços de patrocínio">
+          <div class="s-ad">① Banner topo · 970×90</div>
+          <div class="s-content" style="min-height:44px">Hero · ② Destaque da semana “apresentado por”</div>
+          <div class="slot-row">
+            <div class="s-content">Atleta</div>
+            <div class="s-content">Atleta</div>
+            <div class="s-ad">③ Card nativo</div>
+            <div class="s-ad" style="grid-row:span 2">④ Lateral</div>
+            <div class="s-content">Atleta</div>
+            <div class="s-content">Atleta</div>
+            <div class="s-content">Atleta</div>
+          </div>
+          <div class="s-ad">⑤ Billboard entre seções</div>
+          <div class="slot-row" style="grid-template-columns:1fr 1fr">
+            <div class="s-ad">⑥ Naming de evento</div>
+            <div class="s-ad">⑦ Selo no perfil do atleta</div>
+          </div>
+          <div class="s-ad">⑧ Faixa de parceiros no rodapé</div>
+        </div>
+      </div>
+    </div>
+
+    <h5 class="sub" style="margin-top:40px">Parceiros oficiais</h5>
+    <!-- ESPAÇO DE PATROCÍNIO #8 — Faixa de parceiros -->
+    <div class="sponsor-logos" id="partnerLogos"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <a href="#" class="logo" style="margin-bottom:10px">
+        <div class="logo-text">FIGHTER<span>SCORE</span></div>
+      </a>
+      <p style="max-width:340px">Plataforma aberta de cadastro e cartel de atletas de esportes de combate. Protótipo — dados fictícios.</p>
+    </div>
+    <div>
+      <h5>Atletas</h5>
+      <ul><li><a href="#" data-open="registerModal">Cadastrar perfil</a></li><li><a href="#atletas">Buscar atletas</a></li><li><a href="#atletas">Ranking</a></li></ul>
+    </div>
+    <div>
+      <h5>Eventos</h5>
+      <ul><li><a href="#eventos">Calendário</a></li><li><a href="#" data-open="eventModal">Cadastrar evento</a></li><li><a href="#eventos">Octógono</a></li><li><a href="#eventos">Ring</a></li></ul>
+    </div>
+    <div>
+      <h5>Empresas</h5>
+      <ul><li><a href="#" data-open="sponsorModal">Seja patrocinador</a></li><li><a href="#patrocinio">Mídia kit</a></li></ul>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:24px;font-size:12px">© 2026 Fighter Score</div>
+</footer>
+
+<!-- ===== MODAL: Perfil do atleta ===== -->
+<div class="overlay" id="profileModal" role="dialog" aria-modal="true" aria-label="Perfil do atleta">
+  <div class="dialog">
+    <button class="close-x" data-close aria-label="Fechar">✕</button>
+    <div id="profileContent"></div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Cadastro de atleta ===== -->
+<div class="overlay" id="registerModal" role="dialog" aria-modal="true" aria-label="Cadastro de atleta">
+  <div class="dialog">
+    <button class="close-x" data-close aria-label="Fechar">✕</button>
+    <form class="dlg-pad" id="registerForm" novalidate>
+      <h3 class="dlg-title">Cadastro de atleta</h3>
+      <p class="dlg-sub">Gratuito e aberto a todos os lutadores. Seu perfil fica público e compartilhável.</p>
+
+      <div class="form-sec">Dados pessoais</div>
+      <div class="form-grid">
+        <div class="field full photo-drop">
+          <div class="avatar" id="photoPreview">?</div>
+          <div class="field" style="flex:1">
+            <label for="rPhoto">Foto de perfil (opcional)</label>
+            <input class="input" id="rPhoto" type="file" accept="image/*">
+          </div>
+        </div>
+        <div class="field"><label for="rName">Nome completo *</label><input class="input" id="rName" name="name" required placeholder="Ex.: João da Silva"></div>
+        <div class="field"><label for="rNick">Apelido de luta</label><input class="input" id="rNick" name="nick" placeholder="Ex.: Trovão"></div>
+        <div class="field"><label for="rSex">Gênero *</label><select class="input" id="rSex" name="sex" required><option>Masculino</option><option>Feminino</option></select></div>
+        <div class="field"><label for="rBirth">Data de nascimento</label><input class="input" id="rBirth" name="birth" type="date"></div>
+        <div class="field"><label for="rCity">Cidade / UF *</label><input class="input" id="rCity" name="city" required placeholder="Ex.: Curitiba / PR"></div>
+        <div class="field"><label for="rCountry">País</label><input class="input" id="rCountry" name="country" value="Brasil"></div>
+      </div>
+
+      <div class="form-sec">Perfil de luta</div>
+      <div class="form-grid">
+        <div class="field full">
+          <label>Modalidades * <span style="font-weight:400">(a primeira marcada é a principal)</span></label>
+          <div class="check-group" id="rMods"></div>
+        </div>
+        <div class="field"><label for="rWeight">Categoria de peso *</label><select class="input" id="rWeight" name="weight" required></select></div>
+        <div class="field"><label for="rArena">Arena principal</label><select class="input" id="rArena" name="arena"><option>Octógono</option><option>Ring</option></select></div>
+        <div class="field"><label for="rHeight">Altura (cm)</label><input class="input" id="rHeight" name="height" type="number" min="120" max="230" placeholder="178"></div>
+        <div class="field"><label for="rReach">Envergadura (cm)</label><input class="input" id="rReach" name="reach" type="number" min="120" max="240" placeholder="183"></div>
+        <div class="field"><label for="rTeam">Equipe / Academia</label><input class="input" id="rTeam" name="team" placeholder="Ex.: Chute Boxe"></div>
+        <div class="field"><label for="rStatus">Status</label><select class="input" id="rStatus" name="status"><option>Profissional</option><option>Amador</option></select></div>
+        <div class="field full"><label for="rBio">Bio curta</label><textarea class="input" id="rBio" name="bio" rows="2" placeholder="Conte sua trajetória em poucas linhas"></textarea></div>
+        <div class="field"><label for="rInsta">Instagram</label><input class="input" id="rInsta" name="insta" placeholder="@seuperfil"></div>
+        <div class="field"><label for="rPhone">WhatsApp (privado)</label><input class="input" id="rPhone" name="phone" placeholder="(00) 00000-0000"></div>
+      </div>
+
+      <div class="form-sec">Cartel de lutas</div>
+      <p class="dlg-sub" style="margin:-4px 0 12px">Adicione suas lutas. Você pode completar depois.</p>
+      <div id="fightRows"></div>
+      <button type="button" class="btn btn-ghost btn-sm" id="addFight">+ Adicionar luta</button>
+
+      <div class="form-actions">
+        <label class="terms"><input type="checkbox" id="rTerms" required> Declaro que as informações são verdadeiras e aceito tornar meu perfil público no Fighter Score.</label>
+        <button class="btn btn-red btn-lg" type="submit">Publicar meu perfil</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== MODAL: Cadastro de evento ===== -->
+<div class="overlay" id="eventModal" role="dialog" aria-modal="true" aria-label="Cadastro de evento">
+  <div class="dialog">
+    <button class="close-x" data-close aria-label="Fechar">✕</button>
+    <form class="dlg-pad" id="eventForm" novalidate>
+      <h3 class="dlg-title">Cadastro de evento</h3>
+      <p class="dlg-sub">Divulgue sua competição no calendário do Fighter Score.</p>
+
+      <div class="form-sec">Evento</div>
+      <div class="form-grid">
+        <div class="field full"><label for="eName">Nome do evento *</label><input class="input" id="eName" required placeholder="Ex.: Arena Fight Night 13"></div>
+        <div class="field"><label for="eType">Arena *</label><select class="input" id="eType"><option>Octógono</option><option>Ring</option></select></div>
+        <div class="field"><label for="eLevel">Nível</label><select class="input" id="eLevel"><option>Profissional</option><option>Amador</option><option>Misto</option></select></div>
+        <div class="field full">
+          <label>Modalidades *</label>
+          <div class="check-group" id="eMods"></div>
+        </div>
+        <div class="field"><label for="eDate">Data *</label><input class="input" id="eDate" type="date" required></div>
+        <div class="field"><label for="eTime">Horário</label><input class="input" id="eTime" type="time" value="19:00"></div>
+        <div class="field"><label for="eCity">Cidade / UF *</label><input class="input" id="eCity" required placeholder="Ex.: Recife / PE"></div>
+        <div class="field"><label for="eVenue">Local *</label><input class="input" id="eVenue" required placeholder="Ex.: Ginásio Geraldão"></div>
+      </div>
+
+      <div class="form-sec">Card de lutas</div>
+      <div class="form-grid">
+        <div class="field"><label for="eMainA">Luta principal — atleta 1</label><select class="input" id="eMainA"></select></div>
+        <div class="field"><label for="eMainB">Luta principal — atleta 2</label><select class="input" id="eMainB"></select></div>
+        <div class="field"><label for="eFights">Número de lutas previstas</label><input class="input" id="eFights" type="number" min="1" max="40" value="10"></div>
+        <div class="field"><label for="eTickets">Link de ingressos / transmissão</label><input class="input" id="eTickets" placeholder="https://"></div>
+        <div class="field full">
+          <label class="terms" style="max-width:none;color:var(--text);font-size:14px"><input type="checkbox" id="eOpen" checked> Aceitar inscrições de atletas da plataforma para completar o card</label>
+        </div>
+        <div class="field full"><label for="eDesc">Descrição</label><textarea class="input" id="eDesc" rows="2" placeholder="Regras, pesagem, premiação…"></textarea></div>
+      </div>
+
+      <div class="form-sec">Organizador</div>
+      <div class="form-grid">
+        <div class="field"><label for="eOrg">Organização / Promotora *</label><input class="input" id="eOrg" required></div>
+        <div class="field"><label for="eContact">Responsável</label><input class="input" id="eContact"></div>
+        <div class="field"><label for="eEmail">E-mail *</label><input class="input" id="eEmail" type="email" required></div>
+        <div class="field"><label for="ePhone">WhatsApp</label><input class="input" id="ePhone" placeholder="(00) 00000-0000"></div>
+      </div>
+
+      <div class="form-actions">
+        <span class="terms">O evento é publicado no calendário imediatamente (protótipo).</span>
+        <button class="btn btn-red btn-lg" type="submit">Publicar evento</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== MODAL: Cadastro de patrocinador ===== -->
+<div class="overlay" id="sponsorModal" role="dialog" aria-modal="true" aria-label="Cadastro de patrocinador">
+  <div class="dialog narrow">
+    <button class="close-x" data-close aria-label="Fechar">✕</button>
+    <form class="dlg-pad" id="sponsorForm" novalidate>
+      <h3 class="dlg-title">Seja patrocinador</h3>
+      <p class="dlg-sub" id="sponsorSub">Cadastre sua empresa e nossa equipe comercial entra em contato com o mídia kit.</p>
+
+      <div class="form-sec">Empresa</div>
+      <div class="form-grid">
+        <div class="field"><label for="sCompany">Nome da empresa *</label><input class="input" id="sCompany" required placeholder="Ex.: Suplementos Força Total"></div>
+        <div class="field"><label for="sCnpj">CNPJ</label><input class="input" id="sCnpj" placeholder="00.000.000/0000-00"></div>
+        <div class="field"><label for="sSegment">Segmento</label>
+          <select class="input" id="sSegment"><option>Suplementos / Nutrição</option><option>Equipamentos de luta</option><option>Vestuário</option><option>Academia</option><option>Bebidas</option><option>Apostas esportivas</option><option>Saúde / Clínica</option><option>Outro</option></select>
+        </div>
+        <div class="field"><label for="sSite">Site</label><input class="input" id="sSite" placeholder="https://"></div>
+      </div>
+
+      <div class="form-sec">Contato</div>
+      <div class="form-grid">
+        <div class="field"><label for="sContact">Responsável *</label><input class="input" id="sContact" required></div>
+        <div class="field"><label for="sEmail">E-mail *</label><input class="input" id="sEmail" type="email" required></div>
+        <div class="field"><label for="sPhone">Telefone</label><input class="input" id="sPhone"></div>
+        <div class="field"><label for="sBudget">Verba mensal estimada</label>
+          <select class="input" id="sBudget"><option>Até R$ 1.000</option><option>R$ 1.000 – 5.000</option><option>R$ 5.000 – 20.000</option><option>Acima de R$ 20.000</option></select>
+        </div>
+        <div class="field full">
+          <label>Interesses</label>
+          <div class="check-group">
+            <label><input type="checkbox" checked><span>Banners no site</span></label>
+            <label><input type="checkbox"><span>Patrocinar atletas</span></label>
+            <label><input type="checkbox"><span>Naming de eventos</span></label>
+            <label><input type="checkbox"><span>Ranking oficial</span></label>
+          </div>
+        </div>
+        <div class="field full"><label for="sMsg">Mensagem</label><textarea class="input" id="sMsg" rows="3"></textarea></div>
+      </div>
+
+      <div class="form-actions">
+        <span class="terms">Retorno em até 2 dias úteis.</span>
+        <button class="btn btn-gold btn-lg" type="submit">Enviar cadastro</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   Dados do protótipo (fictícios)
+   ========================================================= */
+const MODALITIES = [
+  { id: "MMA",        color: "#e10600", grad: ["#e10600", "#4a0200"] },
+  { id: "Muay Thai",  color: "#ff7a00", grad: ["#ff7a00", "#5a2400"] },
+  { id: "K-1",        color: "#f5b400", grad: ["#e0a200", "#4d3600"] },
+  { id: "Kickboxing", color: "#ec4899", grad: ["#db2777", "#4a0a2a"] },
+  { id: "Boxe",       color: "#3b82f6", grad: ["#2563eb", "#0b1f4d"] },
+  { id: "Submission", color: "#22c55e", grad: ["#16a34a", "#06301a"] },
+];
+const MOD = Object.fromEntries(MODALITIES.map(m => [m.id, m]));
+
+const WEIGHTS = [
+  "Palha (até 52kg)", "Mosca (até 57kg)", "Galo (até 61kg)", "Pena (até 66kg)",
+  "Leve (até 70kg)", "Meio-médio (até 77kg)", "Médio (até 84kg)",
+  "Meio-pesado (até 93kg)", "Pesado (até 120kg)",
+];
+
+const SEED = [
+  { id: "a1", name: "Rafael Monteiro", nick: "Trovão", sex: "Masculino", mods: ["MMA", "Submission"], weight: "Leve (até 70kg)", arena: "Octógono", city: "Curitiba / PR", country: "Brasil", team: "Chute Boxe Diego Lima", status: "Profissional", height: 175, reach: 180, age: 28, insta: "@rafa.trovao", bio: "9 anos de MMA profissional. Especialista em finalizações no chão.", created: 20, sponsored: true,
+    rec: [14, 3, 0], ko: 5, sub: 7, dec: 2 },
+  { id: "a2", name: "Camila Duarte", nick: "Furacão", sex: "Feminino", mods: ["Muay Thai", "K-1"], weight: "Palha (até 52kg)", arena: "Ring", city: "Rio de Janeiro / RJ", country: "Brasil", team: "Nova União", status: "Profissional", height: 162, reach: 164, age: 25, insta: "@camila.furacao", bio: "Campeã brasileira de Muay Thai 2025. Joelhadas e clinch são minha marca.", created: 18,
+    rec: [22, 4, 1], ko: 9, sub: 0, dec: 13 },
+  { id: "a3", name: "Thiago Albuquerque", nick: "Mão de Pedra", sex: "Masculino", mods: ["Boxe"], weight: "Médio (até 84kg)", arena: "Ring", city: "São Paulo / SP", country: "Brasil", team: "Boxe Autêntico", status: "Profissional", height: 183, reach: 188, age: 31, insta: "@maodepedra", bio: "Pugilista com 80% de vitórias por nocaute.", created: 15,
+    rec: [19, 2, 0], ko: 15, sub: 0, dec: 4 },
+  { id: "a4", name: "Larissa Prado", nick: "Anaconda", sex: "Feminino", mods: ["Submission", "MMA"], weight: "Pena (até 66kg)", arena: "Octógono", city: "Belo Horizonte / MG", country: "Brasil", team: "Alliance BH", status: "Profissional", height: 168, reach: 170, age: 27, insta: "@larissa.anaconda", bio: "Medalhista em ADCC Trials. Triângulo é minha arma.", created: 12,
+    rec: [31, 6, 2], ko: 0, sub: 24, dec: 7 },
+  { id: "a5", name: "Diego Kawamura", nick: "Samurai", sex: "Masculino", mods: ["K-1", "Kickboxing"], weight: "Meio-médio (até 77kg)", arena: "Ring", city: "Londrina / PR", country: "Brasil", team: "Kawamura Kickboxing", status: "Profissional", height: 180, reach: 184, age: 29, insta: "@diego.samurai", bio: "Chutes altos e precisão. Atleta da seleção brasileira de Kickboxing.", created: 10,
+    rec: [17, 5, 0], ko: 10, sub: 0, dec: 7 },
+  { id: "a6", name: "Bruno Ferraz", nick: "Tanque", sex: "Masculino", mods: ["MMA"], weight: "Pesado (até 120kg)", arena: "Octógono", city: "Manaus / AM", country: "Brasil", team: "Amazônia Fight", status: "Profissional", height: 191, reach: 198, age: 33, insta: "@bruno.tanque", bio: "Peso pesado com mão pesada e wrestling forte.", created: 9, sponsored: true,
+    rec: [11, 4, 0], ko: 8, sub: 1, dec: 2 },
+  { id: "a7", name: "Ana Beatriz Lopes", nick: "Bia Pitbull", sex: "Feminino", mods: ["MMA", "Muay Thai"], weight: "Mosca (até 57kg)", arena: "Octógono", city: "Natal / RN", country: "Brasil", team: "Pitbull Brothers", status: "Profissional", height: 165, reach: 168, age: 26, insta: "@biapitbull", bio: "Agressividade e cardio. Invicta nos últimos 6 combates.", created: 7,
+    rec: [9, 1, 0], ko: 4, sub: 2, dec: 3 },
+  { id: "a8", name: "Matheus Rocha", nick: "Rochedo", sex: "Masculino", mods: ["Muay Thai"], weight: "Galo (até 61kg)", arena: "Ring", city: "Salvador / BA", country: "Brasil", team: "CT Rocha", status: "Amador", height: 168, reach: 171, age: 21, insta: "@matheus.rochedo", bio: "Jovem promessa do Muay Thai baiano.", created: 5,
+    rec: [8, 2, 0], ko: 5, sub: 0, dec: 3 },
+  { id: "a9", name: "Gustavo Henrique", nick: "Gigante", sex: "Masculino", mods: ["Submission", "MMA"], weight: "Meio-pesado (até 93kg)", arena: "Octógono", city: "Porto Alegre / RS", country: "Brasil", team: "Gracie Barra POA", status: "Profissional", height: 188, reach: 192, age: 30, insta: "@gustavo.gigante", bio: "Grappler de pressão, campeão do circuito sul de Submission.", created: 4,
+    rec: [26, 8, 1], ko: 0, sub: 18, dec: 8 },
+  { id: "a10", name: "Juliana Martins", nick: "Juju Kick", sex: "Feminino", mods: ["Kickboxing", "K-1"], weight: "Leve (até 70kg)", arena: "Ring", city: "Goiânia / GO", country: "Brasil", team: "Team Martins", status: "Profissional", height: 170, reach: 172, age: 24, insta: "@jujukick", bio: "Campeã sul-americana de K-1 Rules.", created: 3,
+    rec: [15, 3, 0], ko: 6, sub: 0, dec: 9 },
+  { id: "a11", name: "Leonardo Brito", nick: "Leão", sex: "Masculino", mods: ["MMA"], weight: "Pena (até 66kg)", arena: "Octógono", city: "Fortaleza / CE", country: "Brasil", team: "Evolução Thai", status: "Profissional", height: 173, reach: 178, age: 27, insta: "@leobrito.leao", bio: "Striker completo, faixa preta de Muay Thai.", created: 2,
+    rec: [12, 2, 0], ko: 7, sub: 2, dec: 3 },
+  { id: "a12", name: "Pedro Sampaio", nick: "Professor", sex: "Masculino", mods: ["Submission", "MMA"], weight: "Médio (até 84kg)", arena: "Octógono", city: "Brasília / DF", country: "Brasil", team: "Checkmat DF", status: "Profissional", height: 181, reach: 183, age: 35, insta: "@pedro.professor", bio: "Veterano do Submission e do MMA, especialista em finalizações.", created: 1,
+    rec: [40, 11, 3], ko: 0, sub: 29, dec: 11 },
+];
+
+const SEED_EVENTS = [
+  { name: "Arena Fight Night 12", type: "Octógono", date: "2026-11-08", city: "Curitiba / PR", venue: "Ginásio do Tarumã", main: ["a1", "a11"], fights: 11 },
+  { name: "Ring of Kings Brasil", type: "Ring", date: "2026-11-15", city: "São Paulo / SP", venue: "Ginásio do Ibirapuera", main: ["a3", "a5"], fights: 9 },
+  { name: "Thai Warriors Series", type: "Ring", date: "2026-11-29", city: "Rio de Janeiro / RJ", venue: "Arena Carioca 2", main: ["a2", "a10"], fights: 12 },
+  { name: "Cage Warriors Nordeste", type: "Octógono", date: "2026-12-06", city: "Natal / RN", venue: "Arena das Dunas", main: ["a7", "a6"], fights: 10 },
+  { name: "Submission Pro League", type: "Octógono", date: "2026-12-13", city: "Porto Alegre / RS", venue: "Gigantinho", main: ["a9", "a12"], fights: 8 },
+  { name: "K-1 Legends Sul", type: "Ring", date: "2026-12-20", city: "Londrina / PR", venue: "Moringão", main: ["a5", "a8"], fights: 10 },
+];
+
+/* ---------- Cartel gerado para os atletas de exemplo ---------- */
+const OPPONENTS = ["Carlos Nunes", "Vitor Santana", "Eduardo Lima", "Felipe Moraes", "André Castro", "Marcos Vieira", "Ricardo Alves", "Lucas Pereira", "Rodrigo Teixeira", "Paulo Mendes", "Sérgio Ramos", "Henrique Dias"];
+const OPPONENTS_F = ["Fernanda Reis", "Patrícia Souza", "Mariana Costa", "Aline Barbosa", "Débora Freitas", "Vanessa Rocha", "Tatiane Gomes", "Renata Lima", "Bruna Alves", "Priscila Melo"];
+const EVENT_NAMES = ["Arena Fight Night", "Shooto Brasil", "Jungle Fight", "Thai Fight BR", "WGP Kickboxing", "Copa Pódio", "Brave CF", "Future FC", "SFT Combat", "Circuito Paulista"];
+
+function seededRandom(seed) {
+  let s = 0;
+  for (const c of seed) s = (s * 31 + c.charCodeAt(0)) >>> 0;
+  return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296;
+}
+
+function buildFights(a) {
+  const rnd = seededRandom(a.id);
+  const pool = a.sex === "Feminino" ? OPPONENTS_F : OPPONENTS;
+  const grappling = a.mods.includes("Submission");
+  const total = Math.min(8, a.rec[0] + a.rec[1] + a.rec[2]);
+  const fights = [];
+  for (let i = 0; i < total; i++) {
+    const r = rnd();
+    const res = r < a.rec[0] / (a.rec[0] + a.rec[1] + a.rec[2] + .001) ? "V" : (r > .97 && a.rec[2] ? "E" : "D");
+    let method = "Decisão";
+    const m = rnd();
+    if (res !== "E") {
+      if (grappling && m < .6) method = ["Mata-leão", "Triângulo", "Chave de braço", "Guilhotina", "Kimura"][Math.floor(rnd() * 5)];
+      else if (!grappling && m < .5) method = rnd() < .5 ? "KO" : "TKO";
+    }
+    const d = new Date(2026, 8 - i * 2, 1 + Math.floor(rnd() * 27));
+    fights.push({
+      date: d.toISOString().slice(0, 10),
+      opp: pool[Math.floor(rnd() * pool.length)],
+      event: EVENT_NAMES[Math.floor(rnd() * EVENT_NAMES.length)] + " " + (10 + Math.floor(rnd() * 40)),
+      res, method,
+      round: method === "Decisão" ? 3 : 1 + Math.floor(rnd() * 3),
+      arena: a.arena,
+    });
+  }
+  return fights;
+}
+
+/* =========================================================
+   Estado + armazenamento local (protótipo)
+   ========================================================= */
+const STORE_KEY = "fighterscore.athletes.v1";
+const EVENTS_KEY = "fighterscore.events.v1";
+function loadUserAthletes() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || "[]"); } catch { return []; }
+}
+function saveUserAthletes(list) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); } catch { /* armazenamento indisponível */ }
+}
+
+function loadUserEvents() {
+  try { return JSON.parse(localStorage.getItem(EVENTS_KEY) || "[]"); } catch { return []; }
+}
+function saveUserEvents(list) {
+  try { localStorage.setItem(EVENTS_KEY, JSON.stringify(list)); } catch { /* armazenamento indisponível */ }
+}
+
+let userAthletes = loadUserAthletes();
+let userEvents = loadUserEvents();
+const allEvents = () => [...userEvents, ...SEED_EVENTS].sort((x, y) => x.date.localeCompare(y.date));
+const seedAthletes = SEED.map(a => ({ ...a, fights: buildFights(a) }));
+const allAthletes = () => [...userAthletes, ...seedAthletes];
+const byId = id => allAthletes().find(a => a.id === id);
+
+const state = { search: "", mod: "", arena: "", weight: "", sex: "", sort: "score", ev: "" };
+
+/* ---------- Fighter Score ---------- */
+function record(a) {
+  if (a.rec) return { w: a.rec[0], l: a.rec[1], d: a.rec[2], ko: a.ko, sub: a.sub, dec: a.dec };
+  const r = { w: 0, l: 0, d: 0, ko: 0, sub: 0, dec: 0 };
+  for (const f of a.fights) {
+    if (f.res === "V") {
+      r.w++;
+      if (/KO/.test(f.method)) r.ko++;
+      else if (f.method === "Decisão") r.dec++;
+      else r.sub++;
+    } else if (f.res === "D") r.l++;
+    else r.d++;
+  }
+  return r;
+}
+function fighterScore(a) {
+  const r = record(a);
+  const total = r.w + r.l + r.d;
+  if (!total) return 1000;
+  const finishRate = (r.ko + r.sub) / Math.max(1, r.w);
+  return Math.round(1000 + r.w * 22 - r.l * 14 + r.d * 4 + finishRate * 120 + (a.status === "Profissional" ? 60 : 0));
+}
+
+/* =========================================================
+   Helpers de UI
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const initials = n => n.split(/\s+/).filter(Boolean).slice(0, 2).map(p => p[0]).join("").toUpperCase();
+const mainMod = a => MOD[a.mods[0]] || MODALITIES[0];
+
+function avatarHTML(a, extraStyle = "") {
+  const m = mainMod(a);
+  const style = (a.photo
+    ? `background-image:url('${a.photo}')`
+    : `background:linear-gradient(135deg, ${m.grad[0]}, ${m.grad[1]})`) + ";" + extraStyle;
+  return `<div class="avatar" style="${style}">${a.photo ? "" : esc(initials(a.name))}</div>`;
+}
+function topBg(a) {
+  const m = mainMod(a);
+  return `background: radial-gradient(circle at 50% 60%, ${m.color}55, transparent 65%), linear-gradient(160deg, ${m.grad[1]}, #0d0d10)`;
+}
+
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove("show"), 2600);
+}
+
+/* =========================================================
+   Renderização
+   ========================================================= */
+function renderChips() {
+  const el = $("#modChips");
+  el.innerHTML = `<button class="chip ${state.mod ? "" : "active"}" data-mod="">Todas</button>` +
+    MODALITIES.map(m => `<button class="chip ${state.mod === m.id ? "active" : ""}" data-mod="${m.id}"><span class="dot" style="background:${m.color}"></span>${m.id}</button>`).join("");
+}
+
+function filtered() {
+  const q = state.search.trim().toLowerCase();
+  let list = allAthletes().filter(a =>
+    (!state.mod || a.mods.includes(state.mod)) &&
+    (!state.arena || a.arena === state.arena) &&
+    (!state.weight || a.weight === state.weight) &&
+    (!state.sex || a.sex === state.sex) &&
+    (!q || [a.name, a.nick, a.team, a.city].join(" ").toLowerCase().includes(q))
+  );
+  const sorters = {
+    score: (x, y) => fighterScore(y) - fighterScore(x),
+    wins: (x, y) => record(y).w - record(x).w,
+    recent: (x, y) => (y.created || 0) - (x.created || 0),
+    name: (x, y) => x.name.localeCompare(y.name, "pt-BR"),
+  };
+  return list.sort(sorters[state.sort]);
+}
+
+function athleteCard(a) {
+  const r = record(a);
+  const m = mainMod(a);
+  return `
+    <article class="athlete" data-id="${a.id}" tabindex="0" aria-label="Ver perfil de ${esc(a.name)}">
+      <div class="athlete-top" style="${topBg(a)}">
+        <span class="badge-mod" style="color:${m.color}">${esc(a.mods[0])}</span>
+        ${a.isNew ? `<span class="badge-new">NOVO</span>` : `<span class="score-ring"><small>FS</small>${fighterScore(a)}</span>`}
+        ${avatarHTML(a)}
+      </div>
+      <div class="athlete-body">
+        <div>
+          <div class="athlete-name">${esc(a.name)}</div>
+          ${a.nick ? `<div class="athlete-nick">“${esc(a.nick)}”</div>` : ""}
+        </div>
+        <div class="athlete-meta">
+          <span>${esc(a.weight.split(" (")[0])}</span>
+          <span>${esc(a.arena)}</span>
+          <span>${esc(a.city.split(" / ")[1] || a.city)}</span>
+        </div>
+        <div class="record">
+          <div class="w"><b>${r.w}</b><small>VIT</small></div>
+          <div class="l"><b>${r.l}</b><small>DER</small></div>
+          <div><b>${r.d}</b><small>EMP</small></div>
+        </div>
+      </div>
+    </article>`;
+}
+
+// ESPAÇO DE PATROCÍNIO #3 — card nativo intercalado na lista
+function nativeAdCard(n) {
+  return `
+    <div class="ad ad-inline" data-slot="Card nativo na lista de atletas" style="min-height:300px">
+      <span class="ad-tag">Patrocinado</span>
+      <strong>Card nativo #${n}</strong>
+      <span class="ad-size">Aparece entre os atletas</span>
+      <span class="ad-cta">Anuncie aqui →</span>
+    </div>`;
+}
+
+function renderGrid() {
+  const list = filtered();
+  $("#resultCount").textContent = `${list.length} atleta${list.length === 1 ? "" : "s"} encontrado${list.length === 1 ? "" : "s"}`;
+  if (!list.length) {
+    $("#grid").innerHTML = `<div class="empty">Nenhum atleta encontrado com esses filtros.<br><br><button class="btn btn-red" data-open="registerModal">Seja o primeiro a se cadastrar</button></div>`;
+    return;
+  }
+  let html = "", ads = 0;
+  list.forEach((a, i) => {
+    html += athleteCard(a);
+    if ((i + 1) % 5 === 0) html += nativeAdCard(++ads);
+  });
+  $("#grid").innerHTML = html;
+}
+
+function renderRanking() {
+  const top = [...allAthletes()].sort((x, y) => fighterScore(y) - fighterScore(x)).slice(0, 6);
+  $("#ranking").innerHTML = top.map((a, i) => `
+    <div class="rank-item" data-id="${a.id}">
+      <div class="rank-pos">${i + 1}</div>
+      ${avatarHTML(a)}
+      <div class="rank-info"><b>${esc(a.name)}</b><span>${esc(a.mods[0])} · ${esc(a.weight.split(" (")[0])}</span></div>
+      <div class="rank-score">${fighterScore(a)}</div>
+    </div>`).join("") +
+    `<div style="margin-top:10px;font-size:11px;color:var(--muted);text-align:center;border:1px dashed #3a3a46;border-radius:8px;padding:6px;cursor:pointer" class="ad-mini" data-slot="Naming do Ranking Oficial">Ranking oficial apresentado por <b style="color:var(--gold)">sua marca</b></div>`;
+}
+
+function renderFeatured() {
+  const a = [...seedAthletes].sort((x, y) => fighterScore(y) - fighterScore(x))[0];
+  const r = record(a);
+  $("#featured").innerHTML = `
+    <div class="featured-label"><span>DESTAQUE DA SEMANA</span><span class="pill">FS ${fighterScore(a)}</span></div>
+    <div style="display:flex;gap:16px;align-items:center;cursor:pointer" data-id="${a.id}" class="feat-open">
+      ${avatarHTML(a, "width:96px;height:96px;font-size:40px")}
+      <div>
+        <div class="display" style="font-size:38px;line-height:1">${esc(a.name)}</div>
+        <div class="athlete-nick">“${esc(a.nick)}” · ${esc(a.mods.join(" / "))}</div>
+        <div style="color:var(--muted);font-size:13px;margin-top:4px">${esc(a.team)} · ${esc(a.city)}</div>
+      </div>
+    </div>
+    <div class="record" style="margin-top:18px">
+      <div class="w"><b>${r.w}</b><small>VITÓRIAS</small></div>
+      <div class="l"><b>${r.l}</b><small>DERROTAS</small></div>
+      <div><b>${r.ko + r.sub}</b><small>FINALIZAÇÕES</small></div>
+    </div>
+    <div class="presented">
+      <span>Destaque apresentado por</span>
+      <span class="mini-ad" data-slot="Destaque da semana — apresentado por">Sua marca aqui</span>
+    </div>`;
+}
+
+function renderEvents() {
+  const months = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
+  const list = allEvents().filter(e => !state.ev || e.type === state.ev);
+  if (!list.length) {
+    $("#events").innerHTML = `<div class="empty">Nenhum evento de ${esc(state.ev)} no calendário.<br><br><button class="btn btn-red" data-open="eventModal">Cadastrar evento</button></div>`;
+    return;
+  }
+  $("#events").innerHTML = list.map(e => {
+    const [y, mo, d] = e.date.split("-").map(Number);
+    const [a, b] = (e.main || []).map(byId);
+    const mainCard = a && b ? `
+          <div class="main-card">
+            <div class="side-f" data-id="${a.id}">${avatarHTML(a)}<span>${esc(a.nick || a.name)}</span></div>
+            <div class="vs">VS</div>
+            <div class="side-f" data-id="${b.id}">${avatarHTML(b)}<span>${esc(b.nick || b.name)}</span></div>
+          </div>` : `<div class="tbd">Luta principal a definir</div>`;
+    const tags = [...(e.mods || []), e.level].filter(Boolean).map(t => `<span>${esc(t)}</span>`).join("") +
+      (e.open ? `<span class="open">● Inscrições abertas</span>` : "");
+    return `
+      <article class="event">
+        <div class="event-head ${e.type === "Ring" ? "ring" : "octo"}">
+          <span class="event-type">${e.type === "Ring" ? "■" : "⬣"} ${esc(e.type)}</span>
+          ${e.isNew ? `<span class="event-new">NOVO</span>` : ""}
+          <div class="event-date"><b>${String(d).padStart(2, "0")}</b><span>${months[mo - 1]} ${y}</span></div>
+          <h4>${esc(e.name)}</h4>
+          <p>${esc(e.venue)} · ${esc(e.city)}</p>
+        </div>
+        <div class="event-body">
+          ${tags ? `<div class="event-tags">${tags}</div>` : ""}
+          <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted)">LUTA PRINCIPAL</div>
+          ${mainCard}
+          ${e.open ? `<button class="btn btn-ghost btn-sm" data-apply="${esc(e.name)}">Quero lutar neste evento</button>` : ""}
+          <div class="event-foot">
+            <span>${e.fights} lutas no card</span>
+            <span class="event-sponsor" data-slot="Naming de evento — ${esc(e.name)}">Apresentado por: sua marca</span>
+          </div>
+        </div>
+      </article>`;
+  }).join("");
+}
+
+function renderPartners() {
+  $("#partnerLogos").innerHTML = Array.from({ length: 6 }, (_, i) => `
+    <div class="ad" data-slot="Faixa de parceiros (rodapé)"><span>Logo parceiro ${i + 1}</span><span class="ad-cta">Anuncie</span></div>`).join("");
+}
+
+function renderStats() {
+  const list = allAthletes();
+  const fights = list.reduce((s, a) => { const r = record(a); return s + r.w + r.l + r.d; }, 0);
+  const anim = (el, to) => {
+    const t0 = performance.now();
+    const step = t => {
+      const k = Math.min(1, (t - t0) / 900);
+      el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))).toLocaleString("pt-BR");
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  anim($("#statAthletes"), list.length);
+  anim($("#statFights"), fights);
+  anim($("#statEvents"), allEvents().length);
+  anim($("#statMods"), MODALITIES.length);
+}
+
+function renderAll() {
+  renderChips();
+  renderGrid();
+  renderRanking();
+  renderStats();
+}
+
+/* ---------- Perfil ---------- */
+function openProfile(id, pushHash = true) {
+  const a = byId(id);
+  if (!a) return;
+  const r = record(a);
+  const total = r.w + r.l + r.d;
+  const pct = n => total ? (n / total * 100).toFixed(1) : 0;
+  const m = mainMod(a);
+  const fightsHTML = a.fights.length ? `
+    <div class="table-scroll">
+      <table class="fights">
+        <thead><tr><th>Res.</th><th>Adversário</th><th>Método</th><th>Rd</th><th>Evento</th><th>Data</th></tr></thead>
+        <tbody>${a.fights.map(f => `
+          <tr>
+            <td><span class="res ${f.res}">${f.res}</span></td>
+            <td><b>${esc(f.opp)}</b></td>
+            <td>${esc(f.method)}</td>
+            <td>${esc(f.round)}</td>
+            <td>${esc(f.event)}<div style="color:var(--muted);font-size:11px">${esc(f.arena || a.arena)}</div></td>
+            <td style="white-space:nowrap">${f.date ? new Date(f.date + "T12:00").toLocaleDateString("pt-BR") : "—"}</td>
+          </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>` : `<div class="empty" style="padding:24px">Nenhuma luta registrada ainda.</div>`;
+
+  $("#profileContent").innerHTML = `
+    <div class="profile-hero" style="background:linear-gradient(120deg, ${m.grad[0]}, ${m.grad[1]} 60%, #0b0b0d)">
+      ${avatarHTML(a)}
+      <div>
+        <h3>${esc(a.name)}</h3>
+        ${a.nick ? `<div class="nick">“${esc(a.nick)}”</div>` : ""}
+        <div class="profile-tags">
+          ${a.mods.map(x => `<span class="pill">${esc(x)}</span>`).join("")}
+          <span class="pill">${esc(a.weight)}</span>
+          <span class="pill">${esc(a.status)}</span>
+        </div>
+      </div>
+      <div class="profile-score"><b>${fighterScore(a)}</b><span>FIGHTER SCORE</span></div>
+    </div>
+    <div class="profile-body">
+      <div>
+        <div class="kpis">
+          <div class="kpi"><b style="color:var(--green)">${r.w}</b><span>VITÓRIAS</span></div>
+          <div class="kpi"><b style="color:var(--red-2)">${r.l}</b><span>DERROTAS</span></div>
+          <div class="kpi"><b>${r.d}</b><span>EMPATES</span></div>
+          <div class="kpi"><b style="color:var(--gold)">${r.w ? Math.round((r.ko + r.sub) / r.w * 100) : 0}%</b><span>FINALIZAÇÃO</span></div>
+        </div>
+        <h5 class="sub" style="margin-top:0">Vitórias por método</h5>
+        <div class="bar">
+          <i style="width:${r.w ? r.ko / r.w * 100 : 0}%;background:var(--red-2)"></i>
+          <i style="width:${r.w ? r.sub / r.w * 100 : 0}%;background:var(--green)"></i>
+          <i style="width:${r.w ? r.dec / r.w * 100 : 0}%;background:var(--blue)"></i>
+        </div>
+        <div class="bar-legend">
+          <span style="--c:var(--red-2)">KO/TKO ${r.ko}</span>
+          <span style="--c:var(--green)">Finalização ${r.sub}</span>
+          <span style="--c:var(--blue)">Decisão ${r.dec}</span>
+          <span>Aproveitamento ${pct(r.w)}%</span>
+        </div>
+        ${a.bio ? `<h5 class="sub">Sobre</h5><p style="margin:0;color:#cfcfd6">${esc(a.bio)}</p>` : ""}
+        <h5 class="sub">Cartel de lutas ${a.rec ? `<span style="text-transform:none;letter-spacing:0;font-weight:400">(últimas ${a.fights.length})</span>` : ""}</h5>
+        ${fightsHTML}
+      </div>
+      <div>
+        <div class="info-list">
+          <div><span>Equipe</span><b>${esc(a.team || "—")}</b></div>
+          <div><span>Cidade</span><b>${esc(a.city)}</b></div>
+          <div><span>País</span><b>${esc(a.country || "Brasil")}</b></div>
+          <div><span>Arena</span><b>${esc(a.arena)}</b></div>
+          <div><span>Idade</span><b>${a.age ? a.age + " anos" : "—"}</b></div>
+          <div><span>Altura</span><b>${a.height ? a.height + " cm" : "—"}</b></div>
+          <div><span>Envergadura</span><b>${a.reach ? a.reach + " cm" : "—"}</b></div>
+          <div><span>Instagram</span><b>${esc(a.insta || "—")}</b></div>
+        </div>
+        <div class="share-row">
+          <button class="btn btn-red btn-sm" data-share="${a.id}" style="flex:1">Compartilhar perfil</button>
+          <a class="btn btn-ghost btn-sm" style="flex:1" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(`Confira o perfil de ${a.name} no Fighter Score: ${profileUrl(a.id)}`)}">WhatsApp</a>
+        </div>
+        <h5 class="sub">Patrocinadores do atleta</h5>
+        <!-- ESPAÇO DE PATROCÍNIO #7 — Selo no perfil do atleta -->
+        <div class="athlete-sponsors">
+          ${a.sponsored
+            ? `<div class="ad filled" data-slot="Selo no perfil do atleta"><span class="ad-tag">Oficial</span><strong>MARCA</strong></div>`
+            : `<div class="ad" data-slot="Selo no perfil do atleta — ${esc(a.name)}"><strong style="font-size:12px">Patrocine</strong><span class="ad-cta">este atleta</span></div>`}
+          <div class="ad" data-slot="Selo no perfil do atleta — ${esc(a.name)}"><strong style="font-size:12px">Espaço</strong><span class="ad-cta">disponível</span></div>
+        </div>
+      </div>
+    </div>`;
+  openModal("profileModal");
+  if (pushHash) history.replaceState(null, "", "#atleta/" + a.id);
+}
+
+const profileUrl = id => location.href.split("#")[0] + "#atleta/" + id;
+
+async function share(id) {
+  const a = byId(id);
+  const url = profileUrl(id);
+  const data = { title: `${a.name} — Fighter Score`, text: `Confira o cartel de ${a.name} no Fighter Score`, url };
+  try {
+    if (navigator.share) { await navigator.share(data); return; }
+    await navigator.clipboard.writeText(url);
+    toast("Link do perfil copiado!");
+  } catch {
+    toast(url);
+  }
+}
+
+/* ---------- Modais ---------- */
+let lastFocus = null;
+function openModal(id) {
+  lastFocus = document.activeElement;
+  $("#" + id).classList.add("open");
+  document.body.style.overflow = "hidden";
+  setTimeout(() => $("#" + id).querySelector("input, button.close-x")?.focus(), 30);
+}
+function closeModals() {
+  document.querySelectorAll(".overlay.open").forEach(o => o.classList.remove("open"));
+  document.body.style.overflow = "";
+  if (location.hash.startsWith("#atleta/")) history.replaceState(null, "", location.pathname + location.search);
+  lastFocus?.focus?.();
+}
+
+function openSponsor(context) {
+  $("#sponsorSub").textContent = context
+    ? `Espaço selecionado: ${context}. Preencha os dados e enviaremos valores e disponibilidade.`
+    : "Cadastre sua empresa e nossa equipe comercial entra em contato com o mídia kit.";
+  closeModals();
+  openModal("sponsorModal");
+}
+
+/* ---------- Formulário de atleta ---------- */
+function initRegisterForm() {
+  $("#rMods").innerHTML = MODALITIES.map(m => `<label><input type="checkbox" value="${m.id}"><span>${m.id}</span></label>`).join("");
+  $("#rWeight").innerHTML = WEIGHTS.map(w => `<option>${w}</option>`).join("");
+  $("#fMod").innerHTML += MODALITIES.map(m => `<option>${m.id}</option>`).join("");
+  $("#fWeight").innerHTML += WEIGHTS.map(w => `<option value="${w}">${w.split(" (")[0]}</option>`).join("");
+
+  const modOrder = [];
+  $("#rMods").addEventListener("change", e => {
+    const v = e.target.value;
+    if (e.target.checked) modOrder.push(v); else modOrder.splice(modOrder.indexOf(v), 1);
+  });
+
+  const addRow = () => {
+    const row = document.createElement("div");
+    row.className = "fight-row";
+    row.innerHTML = `
+      <input class="input" placeholder="Adversário" data-k="opp">
+      <input class="input" placeholder="Evento" data-k="event">
+      <select class="input" data-k="res"><option value="V">Vitória</option><option value="D">Derrota</option><option value="E">Empate</option></select>
+      <select class="input" data-k="method"><option>Decisão</option><option>KO</option><option>TKO</option><option>Finalização</option></select>
+      <input class="input" type="date" data-k="date" aria-label="Data">
+      <button type="button" class="icon-btn" aria-label="Remover luta">✕</button>`;
+    row.querySelector(".icon-btn").onclick = () => row.remove();
+    $("#fightRows").appendChild(row);
+  };
+  $("#addFight").onclick = addRow;
+  addRow();
+
+  let photoData = "";
+  $("#rPhoto").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const img = new Image();
+    img.onload = () => {
+      // reduz a foto para caber no armazenamento local
+      const c = document.createElement("canvas");
+      const s = 240, k = Math.max(s / img.width, s / img.height);
+      c.width = c.height = s;
+      c.getContext("2d").drawImage(img, (s - img.width * k) / 2, (s - img.height * k) / 2, img.width * k, img.height * k);
+      photoData = c.toDataURL("image/jpeg", .8);
+      const p = $("#photoPreview");
+      p.style.backgroundImage = `url('${photoData}')`;
+      p.textContent = "";
+      URL.revokeObjectURL(img.src);
+    };
+    img.src = URL.createObjectURL(file);
+  });
+
+  $("#registerForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const name = $("#rName").value.trim();
+    const city = $("#rCity").value.trim();
+    if (!name || !city) return toast("Preencha nome e cidade.");
+    if (!modOrder.length) return toast("Escolha ao menos uma modalidade.");
+    if (!$("#rTerms").checked) return toast("Aceite os termos para publicar.");
+
+    const fights = [...document.querySelectorAll("#fightRows .fight-row")].map(row => {
+      const f = {};
+      row.querySelectorAll("[data-k]").forEach(i => f[i.dataset.k] = i.value.trim());
+      return { ...f, round: "—", arena: $("#rArena").value };
+    }).filter(f => f.opp);
+
+    const birth = $("#rBirth").value;
+    const age = birth ? Math.floor((Date.now() - new Date(birth)) / 31557600000) : null;
+    const athlete = {
+      id: "u" + Date.now().toString(36),
+      name, city,
+      nick: $("#rNick").value.trim(),
+      sex: $("#rSex").value,
+      country: $("#rCountry").value.trim() || "Brasil",
+      mods: [...modOrder],
+      weight: $("#rWeight").value,
+      arena: $("#rArena").value,
+      height: +$("#rHeight").value || null,
+      reach: +$("#rReach").value || null,
+      team: $("#rTeam").value.trim(),
+      status: $("#rStatus").value,
+      bio: $("#rBio").value.trim(),
+      insta: $("#rInsta").value.trim(),
+      age, photo: photoData, fights,
+      created: Date.now(), isNew: true,
+    };
+    userAthletes.unshift(athlete);
+    saveUserAthletes(userAthletes);
+
+    e.target.reset();
+    modOrder.length = 0;
+    photoData = "";
+    $("#photoPreview").style.backgroundImage = "";
+    $("#photoPreview").textContent = "?";
+    $("#fightRows").innerHTML = "";
+    addRow();
+
+    closeModals();
+    state.sort = "recent";
+    document.querySelectorAll("[data-sort]").forEach(b => b.classList.toggle("active", b.dataset.sort === "recent"));
+    renderAll();
+    toast("Perfil publicado! Compartilhe seu link.");
+    setTimeout(() => openProfile(athlete.id), 400);
+  });
+}
+
+function fillEventAthleteSelects() {
+  const opts = `<option value="">A definir</option>` + [...allAthletes()]
+    .sort((x, y) => x.name.localeCompare(y.name, "pt-BR"))
+    .map(a => `<option value="${a.id}">${esc(a.name)}${a.nick ? ` “${esc(a.nick)}”` : ""} — ${esc(a.mods[0])}</option>`).join("");
+  $("#eMainA").innerHTML = opts;
+  $("#eMainB").innerHTML = opts;
+}
+
+function initEventForm() {
+  $("#eMods").innerHTML = MODALITIES.map(m => `<label><input type="checkbox" value="${m.id}"><span>${m.id}</span></label>`).join("");
+  fillEventAthleteSelects();
+
+  $("#eventForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const val = id => $(id).value.trim();
+    const mods = [...document.querySelectorAll("#eMods input:checked")].map(i => i.value);
+    if (!val("#eName") || !val("#eDate") || !val("#eCity") || !val("#eVenue")) return toast("Preencha nome, data, cidade e local.");
+    if (!mods.length) return toast("Escolha ao menos uma modalidade.");
+    if (!val("#eOrg") || !/\S+@\S+\.\S+/.test(val("#eEmail"))) return toast("Informe a organização e um e-mail válido.");
+    const mainA = val("#eMainA"), mainB = val("#eMainB");
+    if (mainA && mainA === mainB) return toast("Escolha dois atletas diferentes para a luta principal.");
+
+    const ev = {
+      id: "e" + Date.now().toString(36),
+      name: val("#eName"), type: val("#eType"), level: val("#eLevel"), mods,
+      date: val("#eDate"), time: val("#eTime"), city: val("#eCity"), venue: val("#eVenue"),
+      main: mainA && mainB ? [mainA, mainB] : [],
+      fights: +val("#eFights") || 0, tickets: val("#eTickets"), open: $("#eOpen").checked,
+      desc: val("#eDesc"), org: val("#eOrg"), contact: val("#eContact"), email: val("#eEmail"), phone: val("#ePhone"),
+      isNew: true,
+    };
+    userEvents.push(ev);
+    saveUserEvents(userEvents);
+    e.target.reset();
+    closeModals();
+    state.ev = "";
+    document.querySelectorAll("[data-ev]").forEach(b => b.classList.toggle("active", b.dataset.ev === ""));
+    renderEvents();
+    renderStats();
+    document.getElementById("eventos").scrollIntoView();
+    toast("Evento publicado no calendário!");
+  });
+}
+
+function initSponsorForm() {
+  $("#sponsorForm").addEventListener("submit", e => {
+    e.preventDefault();
+    if (!$("#sCompany").value.trim() || !$("#sContact").value.trim() || !/\S+@\S+\.\S+/.test($("#sEmail").value)) {
+      return toast("Preencha empresa, responsável e um e-mail válido.");
+    }
+    e.target.reset();
+    closeModals();
+    toast("Cadastro recebido! Nossa equipe comercial vai entrar em contato.");
+  });
+}
+
+/* =========================================================
+   Eventos globais
+   ========================================================= */
+document.addEventListener("click", e => {
+  const t = e.target;
+  const opener = t.closest("[data-open]");
+  if (opener) {
+    e.preventDefault();
+    if (opener.dataset.open === "sponsorModal") { openSponsor(); return; }
+    if (opener.dataset.open === "eventModal") fillEventAthleteSelects();
+    closeModals();
+    openModal(opener.dataset.open);
+    $("header.top").classList.remove("menu-open");
+    return;
+  }
+  if (t.closest("[data-close]") || t.classList.contains("overlay")) { closeModals(); return; }
+
+  const slot = t.closest("[data-slot]");
+  if (slot) { e.stopPropagation(); openSponsor(slot.dataset.slot); return; }
+
+  const apply = t.closest("[data-apply]");
+  if (apply) { toast(`Inscrição enviada para ${apply.dataset.apply}! O organizador vai analisar seu perfil.`); return; }
+
+  const sh = t.closest("[data-share]");
+  if (sh) { share(sh.dataset.share); return; }
+
+  const card = t.closest("[data-id]");
+  if (card) { openProfile(card.dataset.id); return; }
+
+  const chip = t.closest("[data-mod]");
+  if (chip) { state.mod = chip.dataset.mod; $("#fMod").value = state.mod; renderChips(); renderGrid(); return; }
+
+  const sort = t.closest("[data-sort]");
+  if (sort) {
+    state.sort = sort.dataset.sort;
+    document.querySelectorAll("[data-sort]").forEach(b => b.classList.toggle("active", b === sort));
+    renderGrid(); return;
+  }
+
+  const ev = t.closest("[data-ev]");
+  if (ev) {
+    state.ev = ev.dataset.ev;
+    document.querySelectorAll("[data-ev]").forEach(b => b.classList.toggle("active", b === ev));
+    renderEvents(); return;
+  }
+
+  if (t.closest(".nav-links a")) $("header.top").classList.remove("menu-open");
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModals();
+  if (e.key === "Enter" && e.target.matches(".athlete")) openProfile(e.target.dataset.id);
+});
+
+$("#menuBtn").onclick = () => $("header.top").classList.toggle("menu-open");
+
+$("#fSearch").addEventListener("input", e => { state.search = e.target.value; renderGrid(); });
+$("#fMod").addEventListener("change", e => { state.mod = e.target.value; renderChips(); renderGrid(); });
+$("#fArena").addEventListener("change", e => { state.arena = e.target.value; renderGrid(); });
+$("#fWeight").addEventListener("change", e => { state.weight = e.target.value; renderGrid(); });
+$("#fSex").addEventListener("change", e => { state.sex = e.target.value; renderGrid(); });
+
+/* ---------- Início ---------- */
+initRegisterForm();
+initSponsorForm();
+initEventForm();
+renderPartners();
+renderFeatured();
+renderEvents();
+renderAll();
+
+// link compartilhado: index.html#atleta/<id>
+const m = location.hash.match(/^#atleta\/(.+)$/);
+if (m) openProfile(m[1], false);
+</script>
+</body>
+</html>
